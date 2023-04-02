@@ -33,9 +33,17 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/api/auth/**",
                         "/api/user/save",
-                        "/api/user/get/**"
+                        "/api/user/get/**",
+                        "/api/course/get/**"
                         )
                     .permitAll();
+
+        http
+                .authorizeHttpRequests()
+                .requestMatchers(
+                        "/api/course/save"
+                )
+                .hasAnyAuthority("admin");
 
         http
                 .authorizeHttpRequests()

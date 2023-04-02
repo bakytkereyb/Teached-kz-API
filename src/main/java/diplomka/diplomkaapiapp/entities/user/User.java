@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -47,11 +48,42 @@ public class User implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String secondName;
 
+    @Column(columnDefinition = "TEXT")
+    private String middleName;
+
+    private LocalDate birthDay;
+
+    @Column(columnDefinition = "TEXT")
+    private String specializationName;
+
+    private LocalDate admissionDate;
+    private Integer graduationYear;
+
+    @Column(columnDefinition = "TEXT")
+    private String degreeAwarded;
+
+    @Column(columnDefinition = "TEXT")
+    private String universityName;
+
+    @Column(columnDefinition = "TEXT")
+    private String position;
+
+    @Column(columnDefinition = "TEXT")
+    private String degree;
+
+    @Column(columnDefinition = "TEXT")
+    private String rank;
+
+    @Column(columnDefinition = "TEXT")
+    private String disciplineNames;
+
     @NotNull
     @NotEmpty
     @Email
     @Column(columnDefinition = "TEXT")
     private String email;
+
+    private Boolean isConfirmed;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -67,6 +99,33 @@ public class User implements UserDetails {
         this.firstName = firstName;
         this.secondName = secondName;
         this.email = email;
+    }
+
+    public boolean isTeacher() {
+        for (Role role : roles) {
+            if (role.getRoleName().equals("teacher")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isTrainer() {
+        for (Role role : roles) {
+            if (role.getRoleName().equals("trainer")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAdmin() {
+        for (Role role : roles) {
+            if (role.getRoleName().equals("admin")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @JsonIgnore
