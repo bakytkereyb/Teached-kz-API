@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -98,6 +99,7 @@ public class User implements UserDetails {
         this.roles.add(role);
     }
 
+    @JsonIgnore
     public void setUserPut(UserPut userPut) {
         this.firstName = userPut.getFirstName();
         this.secondName = userPut.getSecondName();
@@ -116,19 +118,19 @@ public class User implements UserDetails {
 
     public boolean isFullFilled() {
         return
-                !firstName.isEmpty() &&
-                !secondName.isEmpty() &&
-                !middleName.isEmpty() &&
+                !StringUtils.isEmpty(firstName) &&
+                !StringUtils.isEmpty(secondName) &&
+                !StringUtils.isEmpty(middleName) &&
                 birthDay != null &&
-                !specializationName.isEmpty() &&
+                !StringUtils.isEmpty(specializationName) &&
                 admissionDate != null &&
                 graduationYear != null &&
-                !degreeAwarded.isEmpty() &&
-                !universityName.isEmpty() &&
-                !position.isEmpty() &&
-                !degree.isEmpty() &&
-                !rank.isEmpty() &&
-                !disciplineNames.isEmpty();
+                !StringUtils.isEmpty(degreeAwarded) &&
+                !StringUtils.isEmpty(universityName) &&
+                !StringUtils.isEmpty(position) &&
+                !StringUtils.isEmpty(degree) &&
+                !StringUtils.isEmpty(rank) &&
+                !StringUtils.isEmpty(disciplineNames);
     }
 
     public User(String username, String password, String firstName, String secondName, String email) {
