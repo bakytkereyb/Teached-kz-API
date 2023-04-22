@@ -20,6 +20,13 @@ public class CompetenceBankService {
         return competenceBankRepository.save(competenceBank);
     }
 
+    public CompetenceBank initCompetenceBank(CompetenceBank competenceBank) {
+        if (competenceBankRepository.findAll().get(0) != null) {
+            return null;
+        }
+        return competenceBankRepository.save(competenceBank);
+    }
+
     public CompetenceBank getCompetenceBank() {
         return competenceBankRepository.findAll().get(0);
     }

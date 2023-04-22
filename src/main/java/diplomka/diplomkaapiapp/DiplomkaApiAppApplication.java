@@ -43,9 +43,9 @@ public class DiplomkaApiAppApplication {
         adminRole = roleService.saveRole(adminRole);
         trainerRole = roleService.saveRole(trainerRole);
 
-//        CompetenceBank competenceBank = new CompetenceBank();
-//
-//        competenceBankService.saveCompetenceBank(competenceBank);
+        CompetenceBank competenceBank = new CompetenceBank();
+
+        competenceBankService.initCompetenceBank(competenceBank);
 
 //        Role createdAdminRole = roleService.getRoleByName("admin");
 //        User user = new User(
