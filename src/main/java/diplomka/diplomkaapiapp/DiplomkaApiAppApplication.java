@@ -43,7 +43,7 @@ public class DiplomkaApiAppApplication {
         adminRole = roleService.saveRole(adminRole);
         trainerRole = roleService.saveRole(trainerRole);
 
-        CompetenceBank competenceBank = new CompetenceBank();
+        CompetenceBank competenceBank = new CompetenceBank("Competence Bank");
 
         competenceBankService.initCompetenceBank(competenceBank);
 

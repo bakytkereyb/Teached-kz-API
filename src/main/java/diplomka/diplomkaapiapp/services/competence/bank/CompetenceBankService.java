@@ -20,14 +20,14 @@ public class CompetenceBankService {
         return competenceBankRepository.save(competenceBank);
     }
 
-    public CompetenceBank initCompetenceBank(CompetenceBank competenceBank) {
-        if (competenceBankRepository.findAll().get(0) != null) {
-            return null;
+    public void initCompetenceBank(CompetenceBank competenceBank) {
+        CompetenceBank existCB = getCompetenceBank();
+        if (existCB == null) {
+            competenceBankRepository.save(competenceBank);
         }
-        return competenceBankRepository.save(competenceBank);
     }
 
     public CompetenceBank getCompetenceBank() {
-        return competenceBankRepository.findAll().get(0);
+        return competenceBankRepository.findByName("Competence Bank");
     }
 }

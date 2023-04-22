@@ -10,4 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface CompetenceBankRepository extends JpaRepository<CompetenceBank, UUID>, PagingAndSortingRepository<CompetenceBank, UUID> {
+    CompetenceBank findByName(String name);
 }

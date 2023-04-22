@@ -18,8 +18,15 @@ public class CompetenceBank {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(columnDefinition = "TEXT")
+    private String name;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<ComponentBank> componentBankList;
+
+    public CompetenceBank(String name) {
+        this.name = name;
+    }
 
     public void addComponent(ComponentBank componentBank) {
         componentBankList.add(componentBank);
