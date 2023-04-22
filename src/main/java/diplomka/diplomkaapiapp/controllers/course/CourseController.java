@@ -4,6 +4,7 @@ import diplomka.diplomkaapiapp.entities.course.Course;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.services.course.CourseService;
 import diplomka.diplomkaapiapp.services.user.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Tag(name = "Course", description = "APIs for operation on Course")
 public class CourseController {
 
     private final CourseService courseService;

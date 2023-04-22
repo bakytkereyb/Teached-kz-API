@@ -4,6 +4,7 @@ import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import diplomka.diplomkaapiapp.entities.competence.bank.ComponentBank;
 import diplomka.diplomkaapiapp.services.competence.bank.CompetenceBankService;
 import diplomka.diplomkaapiapp.services.competence.bank.ComponentBankService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Tag(name = "Component Bank", description = "APIs for operation on Component Bank")
 public class ComponentBankController {
     private final CompetenceBankService competenceBankService;
     private final ComponentBankService componentBankService;

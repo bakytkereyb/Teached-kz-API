@@ -6,6 +6,12 @@ import diplomka.diplomkaapiapp.request.UserPut;
 import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.RoleService;
 import diplomka.diplomkaapiapp.services.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,7 @@ import java.util.List;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Tag(name = "User", description = "APIs for operation on User")
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -87,6 +94,17 @@ public class UserController {
     }
 
     @GetMapping("/get/{username}")
+    @Operation(
+            summary = "Get User by username",
+            description = "Get User by username")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))})
+    })
     public ResponseEntity getUserByUsername(@PathVariable String username) {
         try {
             User user = userService.getUserByUsername(username);
