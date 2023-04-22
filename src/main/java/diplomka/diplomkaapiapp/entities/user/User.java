@@ -114,6 +114,23 @@ public class User implements UserDetails {
         this.disciplineNames = userPut.getDisciplineNames();
     }
 
+    public boolean isFullFilled() {
+        return
+                !firstName.isEmpty() &&
+                !secondName.isEmpty() &&
+                !middleName.isEmpty() &&
+                birthDay != null &&
+                !specializationName.isEmpty() &&
+                admissionDate != null &&
+                graduationYear != null &&
+                !degreeAwarded.isEmpty() &&
+                !universityName.isEmpty() &&
+                !position.isEmpty() &&
+                !degree.isEmpty() &&
+                !rank.isEmpty() &&
+                !disciplineNames.isEmpty();
+    }
+
     public User(String username, String password, String firstName, String secondName, String email) {
         this.username = username;
         this.password = password;
