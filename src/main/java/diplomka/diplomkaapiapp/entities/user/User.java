@@ -2,6 +2,7 @@ package diplomka.diplomkaapiapp.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
+import diplomka.diplomkaapiapp.request.UserPut;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -95,6 +96,22 @@ public class User implements UserDetails {
 
     public void addRole(Role role) {
         this.roles.add(role);
+    }
+
+    public void setUserPut(UserPut userPut) {
+        this.firstName = userPut.getFirstName();
+        this.secondName = userPut.getSecondName();
+        this.middleName = userPut.getMiddleName();
+        this.birthDay = userPut.getBirthDay();
+        this.specializationName = userPut.getSpecializationName();
+        this.admissionDate = userPut.getAdmissionDate();
+        this.graduationYear = userPut.getGraduationYear();
+        this.degreeAwarded = userPut.getDegreeAwarded();
+        this.universityName = userPut.getUniversityName();
+        this.position = userPut.getPosition();
+        this.degree = userPut.getDegree();
+        this.rank = userPut.getRank();
+        this.disciplineNames = userPut.getDisciplineNames();
     }
 
     public User(String username, String password, String firstName, String secondName, String email) {

@@ -2,6 +2,7 @@ package diplomka.diplomkaapiapp.controllers.user;
 
 import diplomka.diplomkaapiapp.entities.user.Role;
 import diplomka.diplomkaapiapp.entities.user.User;
+import diplomka.diplomkaapiapp.request.UserPut;
 import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.RoleService;
 import diplomka.diplomkaapiapp.services.user.UserService;
@@ -42,6 +43,21 @@ public class UserController {
             Role userRole = roleService.getRoleByName("user");
             user.addRole(userRole);
             return ResponseEntity.ok(userService.saveUser(user));
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity updateUserById(@RequestBody UserPut userPut) {
+        try {
+            User user = userService.getUserByUsername(userPut.getUsername());
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+            user.setUserPut(userPut);
+            return ResponseEntity.ok(userService.updateUser(user));
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());

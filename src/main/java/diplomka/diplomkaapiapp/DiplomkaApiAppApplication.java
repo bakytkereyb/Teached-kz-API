@@ -26,7 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         name = "Authorization",
         in = SecuritySchemeIn.HEADER)
 @OpenAPIDefinition(
-        info = @Info(title = "Apply Default Global SecurityScheme in springdoc-openapi", version = "1.0.0"),
+        info = @Info(title = "TeachEd Documentation", version = "1.0.0"),
         security = { @SecurityRequirement(name = "Authorization") })
 public class DiplomkaApiAppApplication {
 

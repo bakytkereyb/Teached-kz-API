@@ -40,6 +40,10 @@ public class UserService {
         throw new Exception("User already exists");
     }
 
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElse(null);
     }
