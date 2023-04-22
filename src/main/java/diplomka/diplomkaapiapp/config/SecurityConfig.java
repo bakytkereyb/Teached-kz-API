@@ -31,17 +31,28 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests()
                 .requestMatchers(
-                        "/api/auth/**",
-                        "/api/user/save",
-                        "/api/user/get/**",
-                        "/api/course/get/**"
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/javainuse-openapi/**",
+                        "/techgeeknext-openapi/**",
+                        "/api-docs/**",
+                        "/docs/**"
                         )
                     .permitAll();
 
         http
                 .authorizeHttpRequests()
                 .requestMatchers(
-                        "/api/course/save"
+                        "/api/auth/**",
+                        "/api/user/save/**"
+                )
+                .permitAll();
+
+        http
+                .authorizeHttpRequests()
+                .requestMatchers(
+                        "/api/course/save",
+                        "/api/component-bank/save"
                 )
                 .hasAnyAuthority("admin");
 
@@ -49,6 +60,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .anyRequest()
                     .authenticated();
+
 
         http
                     .sessionManagement()

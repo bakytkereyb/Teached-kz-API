@@ -1,6 +1,7 @@
 package diplomka.diplomkaapiapp.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -22,10 +24,9 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
-    @JsonIgnore
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @NotNull
     @NotEmpty
@@ -85,6 +86,9 @@ public class User implements UserDetails {
 
     private Boolean isConfirmed;
 
+//    @Transient
+//    private CompetenceBank competenceBank;
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Role> roles = new ArrayList<>();
@@ -101,15 +105,7 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public boolean isTeacher() {
-        for (Role role : roles) {
-            if (role.getRoleName().equals("teacher")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+//    @JsonIgnore
     public boolean isTrainer() {
         for (Role role : roles) {
             if (role.getRoleName().equals("trainer")) {
@@ -119,6 +115,7 @@ public class User implements UserDetails {
         return false;
     }
 
+//    @JsonIgnore
     public boolean isAdmin() {
         for (Role role : roles) {
             if (role.getRoleName().equals("admin")) {

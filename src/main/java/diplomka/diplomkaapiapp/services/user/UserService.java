@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,6 +34,7 @@ public class UserService {
     public User saveUser(User user) throws Exception {
         User existingUser = userRepository.findByUsername(user.getUsername()).orElse(null);
         if (existingUser == null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
         }
         throw new Exception("User already exists");
@@ -41,7 +44,8 @@ public class UserService {
         return userRepository.findByUsername(username).orElse(null);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getAllUsers(int skip, int limit) {
+        Pageable pageable = PageRequest.of(skip, limit);
+        return userRepository.findAll(pageable).getContent();
     }
 }

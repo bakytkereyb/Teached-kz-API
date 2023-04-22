@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 @Entity
 @Table(name = "courses")
@@ -19,10 +20,10 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Course {
-    @JsonIgnore
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @NotNull
     @NotEmpty
@@ -33,6 +34,26 @@ public class Course {
     @NotEmpty
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @NotNull
+    @NotEmpty
+    @Column(columnDefinition = "TEXT")
+    private String nameKz;
+
+    @NotNull
+    @NotEmpty
+    @Column(columnDefinition = "TEXT")
+    private String descriptionKz;
+
+    @NotNull
+    @NotEmpty
+    @Column(columnDefinition = "TEXT")
+    private String nameRu;
+
+    @NotNull
+    @NotEmpty
+    @Column(columnDefinition = "TEXT")
+    private String descriptionRu;
 
     @ManyToOne
     private User trainer;

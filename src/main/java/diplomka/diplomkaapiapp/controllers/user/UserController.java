@@ -8,6 +8,7 @@ import diplomka.diplomkaapiapp.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +35,33 @@ public class UserController {
         try {
             User user = new User(
                     username,
-                    passwordEncoder.encode(password),
+                    password,
                     firstName,
                     secondName,
                     email);
             Role userRole = roleService.getRoleByName("user");
+            user.addRole(userRole);
+            return ResponseEntity.ok(userService.saveUser(user));
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/save/admin")
+    public ResponseEntity saveUserAdmin(@RequestParam("username") String username,
+                                   @RequestParam("password") String password,
+                                   @RequestParam("firstName") String firstName,
+                                   @RequestParam("secondName") String secondName,
+                                   @RequestParam("email") String email) {
+        try {
+            User user = new User(
+                    username,
+                    password,
+                    firstName,
+                    secondName,
+                    email);
+            Role userRole = roleService.getRoleByName("admin");
             user.addRole(userRole);
             return ResponseEntity.ok(userService.saveUser(user));
         } catch (Exception e) {
@@ -52,7 +75,7 @@ public class UserController {
         try {
             User user = userService.getUserByUsername(username);
             if (user == null) {
-                return ResponseEntity.badRequest().body("user not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
             }
             return ResponseEntity.ok(user);
         } catch (Exception e) {
@@ -62,9 +85,10 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity getAllUsers() {
+    public ResponseEntity getAllUsers(@RequestParam("skip") Integer skip,
+                                      @RequestParam("limit") Integer limit) {
         try {
-            List<User> users = userService.getAllUsers();
+            List<User> users = userService.getAllUsers(skip, limit);
 
             return ResponseEntity.ok(users);
         } catch (Exception e) {
@@ -79,7 +103,7 @@ public class UserController {
             String username = jwtService.extractUsername(token);
             User user = userService.getUserByUsername(username);
             if (user == null) {
-                return ResponseEntity.badRequest().body("user not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
             }
             return ResponseEntity.ok(user);
         } catch (Exception e) {

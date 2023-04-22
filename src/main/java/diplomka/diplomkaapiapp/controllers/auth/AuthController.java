@@ -7,6 +7,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,7 +56,7 @@ public class AuthController {
 //            );
             User user = userService.getUserByUsername(username);
             if (user == null) {
-                return ResponseEntity.badRequest().body("user not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
             }
 
             if (passwordEncoder.matches(password, user.getPassword())) {
@@ -64,7 +70,7 @@ public class AuthController {
                         .build();
                 return ResponseEntity.ok(token);
             }
-            return ResponseEntity.badRequest().body("password is incorrect");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("password is incorrect");
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("bad request");
