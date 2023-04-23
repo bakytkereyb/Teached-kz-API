@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
+import diplomka.diplomkaapiapp.request.SectionCreate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -29,6 +30,11 @@ public class SectionBank {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<QuestionBank> questionBankList;
+
+    public SectionBank(SectionCreate sectionCreate) {
+        this.name = sectionCreate.getName();
+        this.maxPoint = 0.0;
+    }
 
     @Transient
     private Double point;

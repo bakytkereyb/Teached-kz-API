@@ -2,6 +2,7 @@ package diplomka.diplomkaapiapp.entities.competence.bank;
 
 import diplomka.diplomkaapiapp.entities.competence.QuestionType;
 import diplomka.diplomkaapiapp.entities.competence.map.AnswerMap;
+import diplomka.diplomkaapiapp.request.QuestionCreate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -37,7 +38,10 @@ public class QuestionBank {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<AnswerBank> answerBankList;
 
-
+    public QuestionBank(QuestionCreate questionCreate) {
+        this.question = questionCreate.getQuestion();
+        this.type = questionCreate.getType();
+    }
 
     @Transient
     private List<AnswerMap> answerMapList;

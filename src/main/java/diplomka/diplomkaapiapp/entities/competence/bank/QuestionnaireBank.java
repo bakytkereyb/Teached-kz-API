@@ -1,6 +1,7 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
 import diplomka.diplomkaapiapp.entities.competence.Status;
+import diplomka.diplomkaapiapp.request.QuestionnaireCreate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +41,12 @@ public class QuestionnaireBank {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<SectionBank> sectionBankList;
+
+    public QuestionnaireBank(QuestionnaireCreate questionnaireCreate) {
+        this.name = questionnaireCreate.getName();
+        this.nameKz = questionnaireCreate.getNameKz();
+        this.nameRu = questionnaireCreate.getNameRu();
+    }
 
     @Transient
     private Double point;

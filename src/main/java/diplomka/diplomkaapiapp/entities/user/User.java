@@ -52,33 +52,36 @@ public class User implements UserDetails {
     private String secondName;
 
     @Column(columnDefinition = "TEXT")
-    private String middleName;
+    private String middleName = "";
 
-    private LocalDate birthDay;
-
-    @Column(columnDefinition = "TEXT")
-    private String specializationName;
-
-    private LocalDate admissionDate;
-    private Integer graduationYear;
+    private LocalDate birthDay = LocalDate.now();
 
     @Column(columnDefinition = "TEXT")
-    private String degreeAwarded;
+    private String universityName = "";
 
     @Column(columnDefinition = "TEXT")
-    private String universityName;
+    private String specializationName = "";
+
+    private LocalDate admissionDate = LocalDate.now();
+    private Integer graduationYear = 0;
 
     @Column(columnDefinition = "TEXT")
-    private String position;
+    private String degreeAwarded = "";
 
     @Column(columnDefinition = "TEXT")
-    private String degree;
+    private String universityJobName = "";
 
     @Column(columnDefinition = "TEXT")
-    private String rank;
+    private String position = "";
 
     @Column(columnDefinition = "TEXT")
-    private String disciplineNames;
+    private String degree = "";
+
+    @Column(columnDefinition = "TEXT")
+    private String rank = "";
+
+    @Column(columnDefinition = "TEXT")
+    private String disciplineNames = "";
 
     @NotNull
     @NotEmpty
@@ -86,7 +89,7 @@ public class User implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String email;
 
-    private Boolean isConfirmed;
+    private Boolean isConfirmed = false;
 
 //    @Transient
 //    private CompetenceBank competenceBank;
@@ -105,11 +108,12 @@ public class User implements UserDetails {
         this.secondName = userPut.getSecondName();
         this.middleName = userPut.getMiddleName();
         this.birthDay = userPut.getBirthDay();
+        this.universityName = userPut.getUniversityName();
         this.specializationName = userPut.getSpecializationName();
         this.admissionDate = userPut.getAdmissionDate();
         this.graduationYear = userPut.getGraduationYear();
         this.degreeAwarded = userPut.getDegreeAwarded();
-        this.universityName = userPut.getUniversityName();
+        this.universityJobName = userPut.getUniversityName();
         this.position = userPut.getPosition();
         this.degree = userPut.getDegree();
         this.rank = userPut.getRank();

@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
+import diplomka.diplomkaapiapp.request.AnswerCreate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,4 +24,9 @@ public class AnswerBank {
     private String answer;
 
     private Boolean isCorrect;
+
+    public AnswerBank(AnswerCreate answerCreate) {
+        this.answer = answerCreate.getAnswer();
+        this.isCorrect = answerCreate.getIsCorrect();
+    }
 }

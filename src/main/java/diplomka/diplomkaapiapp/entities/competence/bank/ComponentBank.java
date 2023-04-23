@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -35,7 +36,7 @@ public class ComponentBank {
     @Column(columnDefinition = "TEXT")
     private String nameRu;
 
-    private Double maxPoint;
+    private Double maxPoint = 0.0;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<QuestionnaireBank> questionnaireBankList;
@@ -44,6 +45,11 @@ public class ComponentBank {
         this.name = name;
         this.nameKz = nameKz;
         this.nameRu = nameRu;
+    }
+
+    @JsonIgnore
+    public void addQuestionnaire(QuestionnaireBank questionnaireBank) {
+        this.questionnaireBankList.add(questionnaireBank);
     }
 
     @Transient
