@@ -31,6 +31,7 @@ public class QuestionnaireBankController {
     private final SectionBankService sectionBankService;
     private final QuestionBankService questionBankService;
     private final AnswerBankService answerBankService;
+    private final DeleteCompetenceBankService deleteCompetenceBankService;
 
     @PostMapping("/save")
     @ApiResponses(value = {
@@ -144,8 +145,8 @@ public class QuestionnaireBankController {
             if (questionnaireBank == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("questionnaire bank not found");
             }
-            questionnaireBankService.deleteQuestionnaire(questionnaireBank);
-            return ResponseEntity.ok(true);
+            deleteCompetenceBankService.deleteQuestionnaire(questionnaireBank);
+            return ResponseEntity.ok(new String("questionnaire deleted"));
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
