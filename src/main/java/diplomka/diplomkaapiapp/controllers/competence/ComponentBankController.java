@@ -2,8 +2,10 @@ package diplomka.diplomkaapiapp.controllers.competence;
 
 import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import diplomka.diplomkaapiapp.entities.competence.bank.ComponentBank;
+import diplomka.diplomkaapiapp.entities.competence.bank.QuestionnaireBank;
 import diplomka.diplomkaapiapp.services.competence.bank.CompetenceBankService;
 import diplomka.diplomkaapiapp.services.competence.bank.ComponentBankService;
+import diplomka.diplomkaapiapp.services.competence.bank.DeleteCompetenceBankService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class ComponentBankController {
     private final CompetenceBankService competenceBankService;
     private final ComponentBankService componentBankService;
+    private final DeleteCompetenceBankService deleteCompetenceBankService;
 
     @PostMapping("/save")
     public ResponseEntity saveComponent(@RequestParam("name") String name,
@@ -52,6 +55,21 @@ public class ComponentBankController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("component bank not found");
             }
             return ResponseEntity.ok(componentBank);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity deleteComponentById(@PathVariable UUID id) {
+        try {
+            ComponentBank componentBank = componentBankService.getComponentById(id);
+            if (componentBank == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("component bank not found");
+            }
+            deleteCompetenceBankService.deleteComponent(componentBank);
+            return ResponseEntity.ok(new String("component deleted"));
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
