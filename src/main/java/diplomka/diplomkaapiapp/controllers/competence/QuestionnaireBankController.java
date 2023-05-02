@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.controllers.competence;
 
+import diplomka.diplomkaapiapp.entities.competence.QuestionType;
 import diplomka.diplomkaapiapp.entities.competence.bank.*;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.request.QuestionnaireCreate;
@@ -81,6 +82,9 @@ public class QuestionnaireBankController {
                     questionBank.setAnswerBankList(answerBankList);
 
                     questionBank.setMaxPoint(questionMaxPoint[0]);
+                    if (questionBank.getType() != QuestionType.MCQ) {
+                        questionBank.setMaxPoint(1.0);
+                    }
 
                     questionBank = questionBankService.saveQuestionBank(questionBank);
 
