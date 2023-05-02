@@ -1,9 +1,7 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
-import diplomka.diplomkaapiapp.request.AnswerCreate;
+import diplomka.diplomkaapiapp.request.anketaCreate.AnswerCreate;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

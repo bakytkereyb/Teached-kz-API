@@ -2,7 +2,8 @@ package diplomka.diplomkaapiapp.entities.competence.bank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.entities.competence.Status;
-import diplomka.diplomkaapiapp.request.QuestionnaireCreate;
+import diplomka.diplomkaapiapp.entities.user.User;
+import diplomka.diplomkaapiapp.request.anketaCreate.QuestionnaireCreate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -44,16 +45,25 @@ public class QuestionnaireBank {
     @JsonIgnore
     private List<SectionBank> sectionBankList;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<User> passedUsers;
+
     public QuestionnaireBank(QuestionnaireCreate questionnaireCreate) {
         this.name = questionnaireCreate.getName();
         this.nameKz = questionnaireCreate.getNameKz();
         this.nameRu = questionnaireCreate.getNameRu();
     }
 
+    @JsonIgnore
+    public void addPassedUser(User user) {
+        this.passedUsers.add(user);
+    }
+
     @Transient
     private Double point;
     @Transient
-    private Status status;
+    private Status status = Status.NO_START;
     @Transient
     private List<SectionBank> sections;
 }

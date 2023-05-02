@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -16,5 +18,8 @@ public class AnswerBankService {
 
     public AnswerBank saveAnswerBank(AnswerBank answerBank) {
         return answerBankRepository.save(answerBank);
+    }
+    public AnswerBank findAnswerBankById(UUID id) {
+        return answerBankRepository.findById(id).orElse(null);
     }
 }

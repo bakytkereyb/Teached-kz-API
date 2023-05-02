@@ -1,6 +1,6 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
-import diplomka.diplomkaapiapp.request.SectionCreate;
+import diplomka.diplomkaapiapp.request.anketaCreate.SectionCreate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

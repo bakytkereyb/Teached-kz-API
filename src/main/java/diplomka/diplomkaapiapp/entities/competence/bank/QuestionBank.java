@@ -2,7 +2,7 @@ package diplomka.diplomkaapiapp.entities.competence.bank;
 
 import diplomka.diplomkaapiapp.entities.competence.QuestionType;
 import diplomka.diplomkaapiapp.entities.competence.map.AnswerMap;
-import diplomka.diplomkaapiapp.request.QuestionCreate;
+import diplomka.diplomkaapiapp.request.anketaCreate.QuestionCreate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

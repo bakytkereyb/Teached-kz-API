@@ -1,4 +1,4 @@
-package diplomka.diplomkaapiapp.request;
+package diplomka.diplomkaapiapp.request.anketaCreate;
 
 import diplomka.diplomkaapiapp.entities.competence.QuestionType;
 import lombok.Data;
