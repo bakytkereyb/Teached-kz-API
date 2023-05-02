@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.entities.competence.Status;
 import diplomka.diplomkaapiapp.request.QuestionnaireCreate;
 import jakarta.persistence.*;
@@ -40,6 +41,7 @@ public class QuestionnaireBank {
     private Double maxPoint;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<SectionBank> sectionBankList;
 
     public QuestionnaireBank(QuestionnaireCreate questionnaireCreate) {
@@ -52,4 +54,6 @@ public class QuestionnaireBank {
     private Double point;
     @Transient
     private Status status;
+    @Transient
+    private List<SectionBank> sections;
 }

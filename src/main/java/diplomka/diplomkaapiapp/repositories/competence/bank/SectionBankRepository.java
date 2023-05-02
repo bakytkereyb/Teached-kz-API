@@ -10,4 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface SectionBankRepository extends JpaRepository<SectionBank, UUID>, PagingAndSortingRepository<SectionBank, UUID> {
+    SectionBank findByQuestionBankListContaining(QuestionBank questionBank);
 }

@@ -10,4 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface QuestionBankRepository extends JpaRepository<QuestionBank, UUID>, PagingAndSortingRepository<QuestionBank, UUID> {
+    QuestionBank findByAnswerBankListContaining(AnswerBank answerBank);    
 }

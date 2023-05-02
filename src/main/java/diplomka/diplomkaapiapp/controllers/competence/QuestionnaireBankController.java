@@ -39,7 +39,7 @@ public class QuestionnaireBankController {
                     description = "OK",
                     content = {@Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = QuestionnaireCreate.class))})
+                            schema = @Schema(implementation = QuestionnaireBank.class))})
     })
     public ResponseEntity saveQuestionnaireBank(@RequestBody QuestionnaireCreate questionnaireCreate,
                                                 @RequestParam("componentId")UUID componentId) {
@@ -108,6 +108,62 @@ public class QuestionnaireBankController {
             componentBankService.saveComponentBank(componentBank);
 
             return ResponseEntity.ok(questionnaireBank);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = QuestionnaireBank.class))})
+    })
+    public ResponseEntity getQuestionnaireById(@PathVariable UUID id) {
+        try {
+            QuestionnaireBank questionnaireBank = questionnaireBankService.getQuestionnaireById(id);
+            if (questionnaireBank == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("questionnaire bank not found");
+            }
+            questionnaireBank.setSections(questionnaireBank.getSectionBankList());
+            return ResponseEntity.ok(questionnaireBank);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity deleteQuestionnaireById(@PathVariable UUID id) {
+        try {
+            QuestionnaireBank questionnaireBank = questionnaireBankService.getQuestionnaireById(id);
+            if (questionnaireBank == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("questionnaire bank not found");
+            }
+            questionnaireBankService.deleteQuestionnaire(questionnaireBank);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/get/component")
+    public ResponseEntity getComponentBankByQuestionnaireId(@PathVariable UUID id) {
+        try {
+            QuestionnaireBank questionnaireBank = questionnaireBankService.getQuestionnaireById(id);
+            if (questionnaireBank == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("questionnaire bank not found");
+            }
+            ComponentBank componentBank = componentBankService.getComponentBankByQuestionnaire(questionnaireBank);
+            if (componentBank == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("component bank not found");
+            }
+            return ResponseEntity.ok(componentBank);
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
