@@ -99,7 +99,9 @@ public class User implements UserDetails {
     private Collection<Role> roles = new ArrayList<>();
 
     public void addRole(Role role) {
-        this.roles.add(role);
+        if (this.roles.stream().noneMatch(userRole -> userRole.getRoleName().equals(role.getRoleName()))) {
+            this.roles.add(role);
+        }
     }
 
     @JsonIgnore
