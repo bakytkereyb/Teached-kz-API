@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -92,6 +93,50 @@ public class UserController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
+
+    @PostMapping("/save/trainer")
+    public ResponseEntity saveUserTrainer(@RequestParam("username") String username,
+                                        @RequestParam("password") String password,
+                                        @RequestParam("firstName") String firstName,
+                                        @RequestParam("secondName") String secondName,
+                                        @RequestParam("email") String email) {
+        try {
+            User user = new User(
+                    username,
+                    password,
+                    firstName,
+                    secondName,
+                    email);
+            Role userRole = roleService.getRoleByName("trainer");
+            user.addRole(userRole);
+            return ResponseEntity.ok(userService.saveUser(user));
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/role/add")
+    public ResponseEntity addRoleToUser(@PathVariable UUID id,
+                                        @RequestParam("roleName") String roleName) {
+        try {
+            User user = userService.getUserById(id);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+            Role userRole = roleService.getRoleByName(roleName);
+            if (userRole == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("role not found");
+            }
+            user.addRole(userRole);
+            user = userService.updateUser(user);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
 
     @GetMapping("/get/{username}")
     @Operation(
