@@ -277,6 +277,12 @@ public class QuestionnaireBankController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("questionnaire bank not found");
             }
 
+            if (questionnaireBank.getPassedUsers().stream().anyMatch(passedUser ->
+                passedUser.getId().equals(user.getId())
+            )) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("questionnaire has already been passed");
+            }
+
             boolean[] isValidToSave = {true};
             List<AnswerMap> answersToSave = new ArrayList<>();
 
