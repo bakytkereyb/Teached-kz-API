@@ -1,13 +1,16 @@
 package diplomka.diplomkaapiapp.services.competence.bank;
 
 import diplomka.diplomkaapiapp.entities.competence.bank.*;
+import diplomka.diplomkaapiapp.entities.competence.map.AnswerMap;
 import diplomka.diplomkaapiapp.repositories.competence.bank.*;
+import diplomka.diplomkaapiapp.repositories.competence.map.AnswerMapRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,13 +25,14 @@ public class DeleteCompetenceBankService {
     private final SectionBankRepository sectionBankRepository;
     private final QuestionBankRepository questionBankRepository;
     private final AnswerBankRepository answerBankRepository;
+    private final AnswerMapRepository answerMapRepository;
 
     public void deleteComponent(ComponentBank componentBank) {
         CompetenceBank competenceBank = competenceBankRepository.findByName("Competence Bank");
         if (competenceBank != null) {
             competenceBank.setComponentBankList(
                     competenceBank.getComponentBankList().stream()
-                            .filter(component -> component.getId() != competenceBank.getId())
+                            .filter(component -> component.getId() != componentBank.getId())
                             .collect(Collectors.toList())
             );
             competenceBankRepository.save(competenceBank);
@@ -43,7 +47,7 @@ public class DeleteCompetenceBankService {
         }
     }
 
-    public void deleteQuestionnaire(QuestionnaireBank questionnaireBank) {
+    public void deleteQuestionnaire(QuestionnaireBank questionnaireBank){
         ComponentBank componentBank = componentBankRepository.findByQuestionnaireBankListContaining(questionnaireBank);
         if (componentBank != null) {
             componentBank.setQuestionnaireBankList(
@@ -55,6 +59,7 @@ public class DeleteCompetenceBankService {
         }
         List<SectionBank> sectionBankList = questionnaireBank.getSectionBankList();
         questionnaireBank.setSections(null);
+        questionnaireBank.setPassedUsers(null);
         questionnaireBankRepository.save(questionnaireBank);
         questionnaireBankRepository.delete(questionnaireBank);
 
@@ -93,6 +98,7 @@ public class DeleteCompetenceBankService {
             );
             sectionBankRepository.save(sectionBank);
         }
+
         List<AnswerBank> answerBankList = questionBank.getAnswerBankList();
         questionBank.setAnswerBankList(null);
         questionBankRepository.save(questionBank);
