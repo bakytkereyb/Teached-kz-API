@@ -51,17 +51,5 @@ public class DiplomkaApiAppApplication {
         CompetenceBank competenceBank = new CompetenceBank("Competence Bank");
 
         competenceBankService.initCompetenceBank(competenceBank);
-
-//        Role createdAdminRole = roleService.getRoleByName("admin");
-//        User user = new User(
-//                "admin",
-////                "$2a$10$Hq/pSglIWlsUSEyxDCxoNetcVwazyseFoTgAyq7RvLIi9bRjVkRlO",
-//                "123",
-//                "Admin",
-//                "Adminovich",
-//                "admin@admin.ru");
-//        user.addRole(adminRole);
-//        user = userService.saveUser(user);
-
     }
 }
