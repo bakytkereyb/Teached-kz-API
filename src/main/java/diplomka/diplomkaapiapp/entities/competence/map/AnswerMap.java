@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.UUID;
 
@@ -27,13 +29,16 @@ public class AnswerMap {
     private String answerText;
 
     @ManyToOne
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private QuestionBank questionBank;
 
     @ManyToOne
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     private AnswerBank answerBank;
 
     @ManyToOne
+//    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User user;
 

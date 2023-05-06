@@ -28,7 +28,7 @@ public class SectionBank {
 
     private Double maxPoint;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<QuestionBank> questionBankList;
 
     public SectionBank(SectionCreate sectionCreate) {

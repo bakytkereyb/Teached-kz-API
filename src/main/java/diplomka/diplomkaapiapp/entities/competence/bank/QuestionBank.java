@@ -35,7 +35,7 @@ public class QuestionBank {
 
     private Double maxPoint;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<AnswerBank> answerBankList;
 
     public QuestionBank(QuestionCreate questionCreate) {

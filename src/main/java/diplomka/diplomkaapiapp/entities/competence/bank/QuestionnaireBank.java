@@ -41,7 +41,7 @@ public class QuestionnaireBank {
 
     private Double maxPoint;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<SectionBank> sectionBankList;
 
