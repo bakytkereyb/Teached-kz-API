@@ -2,6 +2,7 @@ package diplomka.diplomkaapiapp.controllers.user;
 
 import diplomka.diplomkaapiapp.entities.user.Role;
 import diplomka.diplomkaapiapp.entities.user.User;
+import diplomka.diplomkaapiapp.request.ListPagination.ListPagination;
 import diplomka.diplomkaapiapp.request.UserPut;
 import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.RoleService;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -164,10 +166,40 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity getAllUsers(@RequestParam("skip") Integer skip,
+    public ResponseEntity getAllUsers(@RequestParam("page") Integer page,
                                       @RequestParam("limit") Integer limit) {
         try {
-            List<User> users = userService.getAllUsers(skip, limit);
+            List<User> users = userService.getAllUsers(page, limit);
+            List<User> nextUsers = userService.getAllUsers(page + 1, limit);
+
+            ListPagination<User> listPagination = new ListPagination<>(users, !nextUsers.isEmpty());
+
+            return ResponseEntity.ok(listPagination);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+//    @GetMapping("/get/trainer")
+//    public ResponseEntity getAllUsersTrainer(@RequestParam("skip") Integer skip,
+//                                             @RequestParam("limit") Integer limit) {
+//        try {
+//            Role userRole = roleService.getRoleByName("trainer");
+//            List<User> users = userService.getAllUsersByRole(skip, limit, userRole);
+//
+//            return ResponseEntity.ok(users);
+//        } catch (Exception e) {
+//            log.error(e.toString());
+//            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+//        }
+//    }
+
+    @GetMapping("/get/trainer/all")
+    public ResponseEntity getAllUsersTrainerAll() {
+        try {
+            Role userRole = roleService.getRoleByName("trainer");
+            List<User> users = userService.getAllUsersByRoleWithoutPage(userRole);
 
             return ResponseEntity.ok(users);
         } catch (Exception e) {
