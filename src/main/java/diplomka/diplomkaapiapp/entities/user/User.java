@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.entities.user;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import diplomka.diplomkaapiapp.request.UserPut;
@@ -15,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.beans.Transient;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -165,6 +167,17 @@ public class User implements UserDetails {
             }
         }
         return false;
+    }
+    
+    @JsonGetter
+    private String fullName() {
+        String fullName = this.secondName + " " + this.firstName;
+        if (this.middleName != null) {
+            if (!this.middleName.isEmpty()) {
+                fullName += " " + this.middleName;
+            }
+        }
+        return fullName;
     }
 
     @JsonIgnore
