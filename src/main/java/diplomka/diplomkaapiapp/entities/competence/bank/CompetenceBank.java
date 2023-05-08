@@ -22,6 +22,7 @@ public class CompetenceBank {
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OrderBy("createdAt ASC")
     private List<ComponentBank> componentBankList;
 
     public CompetenceBank(String name) {
