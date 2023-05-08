@@ -170,6 +170,17 @@ public class QuestionnaireBankController {
 
                 questionnaireBank.setPoint(anketaPoint[0]);
             }
+
+            if (user.isAdmin()) {
+                questionnaireBank.getSections().forEach(section -> {
+                    section.getQuestionBankList().forEach(question -> {
+                        question.getAnswerBankList().forEach(answerBank -> {
+                            answerBank.setIsCorrectPublic(answerBank.getIsCorrect());
+                        });
+                    });
+                });
+            }
+
             return ResponseEntity.ok(questionnaireBank);
         } catch (Exception e) {
             log.error(e.toString());
