@@ -4,6 +4,7 @@ import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import diplomka.diplomkaapiapp.entities.user.Role;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.services.competence.bank.CompetenceBankService;
+import diplomka.diplomkaapiapp.services.file.FilesStorageService;
 import diplomka.diplomkaapiapp.services.user.RoleService;
 import diplomka.diplomkaapiapp.services.user.UserService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -51,5 +52,9 @@ public class DiplomkaApiAppApplication {
         CompetenceBank competenceBank = new CompetenceBank("Competence Bank");
 
         competenceBankService.initCompetenceBank(competenceBank);
+
+        FilesStorageService filesStorageService = configurableApplicationContext.getBean(FilesStorageService.class);
+        filesStorageService.init();
+
     }
 }
