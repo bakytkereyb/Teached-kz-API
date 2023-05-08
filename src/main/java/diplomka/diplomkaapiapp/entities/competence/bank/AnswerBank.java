@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.request.anketaCreate.AnswerCreate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,11 @@ public class AnswerBank {
     @Column(columnDefinition = "TEXT")
     private String answer;
 
+    @JsonIgnore
     private Boolean isCorrect;
+
+    @Transient
+    private Boolean isCorrectPublic;
 
     public AnswerBank(AnswerCreate answerCreate) {
         this.answer = answerCreate.getAnswer();
