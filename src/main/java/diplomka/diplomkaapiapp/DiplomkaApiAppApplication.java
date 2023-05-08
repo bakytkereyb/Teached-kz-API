@@ -2,9 +2,8 @@ package diplomka.diplomkaapiapp;
 
 import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import diplomka.diplomkaapiapp.entities.user.Role;
-import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.services.competence.bank.CompetenceBankService;
-import diplomka.diplomkaapiapp.services.file.FilesStorageService;
+import diplomka.diplomkaapiapp.services.storage.FilesStorageService;
 import diplomka.diplomkaapiapp.services.user.RoleService;
 import diplomka.diplomkaapiapp.services.user.UserService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -17,10 +16,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 @SecurityScheme(

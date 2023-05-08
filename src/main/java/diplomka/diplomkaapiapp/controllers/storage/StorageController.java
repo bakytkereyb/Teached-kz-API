@@ -1,6 +1,6 @@
-package diplomka.diplomkaapiapp.controllers.file;
+package diplomka.diplomkaapiapp.controllers.storage;
 
-import diplomka.diplomkaapiapp.services.file.FilesStorageService;
+import diplomka.diplomkaapiapp.services.storage.FilesStorageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +18,8 @@ import java.util.UUID;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-@Tag(name = "File", description = "File controller")
-public class FileController {
+@Tag(name = "Storage", description = "Storage controller")
+public class StorageController {
     private final FilesStorageService filesStorageService;
 
     @PostMapping(value = "/upload", consumes = {

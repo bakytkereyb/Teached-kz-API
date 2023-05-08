@@ -1,4 +1,4 @@
-package diplomka.diplomkaapiapp.services.file;
+package diplomka.diplomkaapiapp.services.storage;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
