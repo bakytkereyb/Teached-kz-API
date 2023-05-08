@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.services.user;
 
+import diplomka.diplomkaapiapp.entities.user.Role;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.repositories.user.RoleRepository;
 import diplomka.diplomkaapiapp.repositories.user.UserRepository;
@@ -53,8 +54,17 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public List<User> getAllUsers(int skip, int limit) {
-        Pageable pageable = PageRequest.of(skip, limit);
+    public List<User> getAllUsers(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
         return userRepository.findAll(pageable).getContent();
+    }
+
+//    public List<User> getAllUsersByRole(int skip, int limit, Role role) {
+//        Pageable pageable = PageRequest.of(skip, limit);
+//        return userRepository.findAllByRolesContaining(role, pageable);
+//    }
+
+    public List<User> getAllUsersByRoleWithoutPage(Role role) {
+        return userRepository.findAllByRolesContaining(role);
     }
 }
