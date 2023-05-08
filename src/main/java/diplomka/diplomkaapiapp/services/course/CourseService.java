@@ -1,6 +1,7 @@
 package diplomka.diplomkaapiapp.services.course;
 
 import diplomka.diplomkaapiapp.entities.course.Course;
+import diplomka.diplomkaapiapp.entities.course.CourseStatus;
 import diplomka.diplomkaapiapp.repositories.course.CourseRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,8 +31,13 @@ public class CourseService {
         return courseRepository.findById(id).orElse(null);
     }
 
-    public List<Course> getAllCourses(int skip, int limit) {
-        Pageable pageable = PageRequest.of(skip, limit);
+    public List<Course> getAllCourses(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
         return courseRepository.findAll(pageable).getContent();
+    }
+
+    public List<Course> getAllCoursesByStatus(int page, int limit, CourseStatus status) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+        return courseRepository.findAllByStatus(status,pageable);
     }
 }
