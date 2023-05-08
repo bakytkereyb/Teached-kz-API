@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,8 +38,10 @@ public class ComponentBank {
     private String nameRu;
 
     private Double maxPoint = 0.0;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OrderBy("createdAt ASC")
     private List<QuestionnaireBank> questionnaireBankList;
 
     public ComponentBank(String name, String nameKz, String nameRu) {
@@ -53,5 +56,5 @@ public class ComponentBank {
     }
 
     @Transient
-    private Double averagePoint;
+    private Double averagePoint = 0.0;
 }
