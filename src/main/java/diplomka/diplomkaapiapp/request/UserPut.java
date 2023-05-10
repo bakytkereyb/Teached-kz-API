@@ -21,4 +21,5 @@ public class UserPut {
     private String degree;
     private String rank;
     private String disciplineNames;
+    private String telNumber;
 }

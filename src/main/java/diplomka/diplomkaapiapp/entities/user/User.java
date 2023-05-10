@@ -85,6 +85,9 @@ public class User implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String disciplineNames = "";
 
+    @Column(columnDefinition = "TEXT")
+    private String telNumber = "";
+
     @NotNull
     @NotEmpty
     @Email
@@ -122,6 +125,7 @@ public class User implements UserDetails {
         this.degree = userPut.getDegree();
         this.rank = userPut.getRank();
         this.disciplineNames = userPut.getDisciplineNames();
+        this.telNumber = userPut.getTelNumber();
     }
 
     public boolean isFullFilled() {
@@ -138,7 +142,8 @@ public class User implements UserDetails {
                 !StringUtils.isEmpty(position) &&
                 !StringUtils.isEmpty(degree) &&
                 !StringUtils.isEmpty(rank) &&
-                !StringUtils.isEmpty(disciplineNames);
+                !StringUtils.isEmpty(disciplineNames) &&
+                !StringUtils.isEmpty(telNumber);
     }
 
     public User(String username, String password, String firstName, String secondName, String email) {
