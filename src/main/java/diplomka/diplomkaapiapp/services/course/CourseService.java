@@ -2,6 +2,7 @@ package diplomka.diplomkaapiapp.services.course;
 
 import diplomka.diplomkaapiapp.entities.course.Course;
 import diplomka.diplomkaapiapp.entities.course.CourseStatus;
+import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.repositories.course.CourseRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,10 @@ public class CourseService {
     public List<Course> getAllCoursesByStatus(int page, int limit, CourseStatus status) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
         return courseRepository.findAllByStatus(status,pageable);
+    }
+
+    public List<Course> getAllCoursesByStudent(User student, int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return courseRepository.findAllByStudentsContaining(student, pageable);
     }
 }
