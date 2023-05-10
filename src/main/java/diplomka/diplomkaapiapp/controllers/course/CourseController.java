@@ -1,12 +1,21 @@
 package diplomka.diplomkaapiapp.controllers.course;
 
 import diplomka.diplomkaapiapp.entities.course.Course;
+import diplomka.diplomkaapiapp.entities.course.CourseSection;
 import diplomka.diplomkaapiapp.entities.course.CourseStatus;
+import diplomka.diplomkaapiapp.entities.course.CourseUserStatus;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.request.ListPagination.ListPagination;
+import diplomka.diplomkaapiapp.services.course.CourseSectionService;
 import diplomka.diplomkaapiapp.services.course.CourseService;
 import diplomka.diplomkaapiapp.services.course.DeleteCourseService;
+import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,16 +37,62 @@ import java.util.UUID;
 public class CourseController {
 
     private final CourseService courseService;
+    private final CourseSectionService courseSectionService;
     private final DeleteCourseService deleteCourseService;
     private final UserService userService;
+    private final JwtService jwtService;
 
     @GetMapping("/get/{id}")
-    public ResponseEntity getCourseById(@PathVariable UUID id) {
+    @Operation(
+            summary = "Get Course by id",
+            description = "Get Course by id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Course.class))})
+    })
+    public ResponseEntity getCourseById(@PathVariable UUID id,
+                                        @RequestHeader(value="Authorization") String token) {
         try {
+            String username = jwtService.extractUsername(token);
+            User user = userService.getUserByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+
             Course course = courseService.getCourseById(id);
             if (course == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
             }
+
+            if (course.getStudents().stream().anyMatch(student -> student.getId().equals(user.getId()))) {
+                if (course.getClosedStudents().stream().anyMatch(closedStudent -> closedStudent.getId().equals(user.getId()))) {
+                    course.setUserStatus(CourseUserStatus.FINISHED);
+                } else {
+                    course.setUserStatus(CourseUserStatus.IN_PROGRESS);
+                }
+                int[] progress = {0};
+                course.getSections().forEach(courseSection -> {
+                    courseSection.setClosed(
+                            courseSection.getClosedStudents().stream()
+                                    .anyMatch(closedStudent -> closedStudent.getId().equals(user.getId()))
+                    );
+                    if (courseSection.isClosed()) {
+                        progress[0]++;
+                    }
+                });
+                course.setProgress(progress[0]);
+
+                if (course.getProgress().equals(course.maxProgress())) {
+                    course.getCertificateSection().setClosed(true);
+                }
+            } else {
+                course.setUserStatus(CourseUserStatus.FORBIDDEN);
+            }
+
             return ResponseEntity.ok(course);
         } catch (Exception e) {
             log.error(e.toString());
@@ -105,6 +160,41 @@ public class CourseController {
         }
     }
 
+    @PostMapping("/{id}/add/section")
+    public ResponseEntity addSection(@RequestParam("name") String name,
+                                     @PathVariable UUID id) {
+        try {
+            Course course = courseService.getCourseById(id);
+            if (course == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+            }
+            CourseSection section = new CourseSection(name);
+            section = courseSectionService.saveCourseSection(section);
+            course.addSection(section);
+            course = courseService.saveCourse(course);
+            return ResponseEntity.ok(course);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}/delete/section/{sectionId}")
+    public ResponseEntity deleteSection(@PathVariable UUID id, @PathVariable UUID sectionId) {
+        try {
+            Course course = courseService.getCourseById(id);
+            if (course == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+            }
+            course.removeSectionById(sectionId);
+            course = courseService.saveCourse(course);
+            return ResponseEntity.ok(course);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity deleteCourseById(@PathVariable UUID id) {
         try {
@@ -117,6 +207,77 @@ public class CourseController {
             }
             deleteCourseService.deleteCourse(course);
             return ResponseEntity.ok(new String("course deleted"));
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/register")
+    public ResponseEntity registerUserToCourse(@PathVariable UUID id,
+                                               @RequestHeader(value="Authorization") String token) {
+        try {
+            String username = jwtService.extractUsername(token);
+            User user = userService.getUserByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+
+            Course course = courseService.getCourseById(id);
+            if (course == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+            }
+
+            course.addStudent(user);
+            course = courseService.saveCourse(course);
+
+            return ResponseEntity.ok(new String("user is registered to course"));
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping ("/get/my")
+    public ResponseEntity getAllMyCourses(@RequestHeader(value="Authorization") String token,
+                                          @RequestParam("page") Integer page,
+                                          @RequestParam("limit") Integer limit
+                                          ) {
+        try {
+            String username = jwtService.extractUsername(token);
+            User user = userService.getUserByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+            List<Course> courses = courseService.getAllCoursesByStudent(user, page, limit);
+            List<Course> nextCourses = courseService.getAllCoursesByStudent(user, page + 1, limit);
+
+            ListPagination<Course> listPagination = new ListPagination<>(courses, !nextCourses.isEmpty());
+
+            listPagination.getList().forEach(course -> {
+                if (course.getClosedStudents().stream().anyMatch(closedStudent -> closedStudent.getId().equals(user.getId()))) {
+                    course.setUserStatus(CourseUserStatus.FINISHED);
+                } else {
+                    course.setUserStatus(CourseUserStatus.IN_PROGRESS);
+                }
+                int[] progress = {0};
+                course.getSections().forEach(courseSection -> {
+                    courseSection.setClosed(
+                            courseSection.getClosedStudents().stream()
+                                    .anyMatch(closedStudent -> closedStudent.getId().equals(user.getId()))
+                    );
+                    if (courseSection.isClosed()) {
+                        progress[0]++;
+                    }
+                });
+                course.setProgress(progress[0]);
+
+                if (course.getProgress().equals(course.maxProgress())) {
+                    course.getCertificateSection().setClosed(true);
+                }
+            });
+
+            return ResponseEntity.ok(listPagination);
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -139,7 +300,9 @@ public class CourseController {
             if (!trainer.isTrainer()) {
                 return ResponseEntity.badRequest().body("user is not trainer");
             }
-            Course course = new Course(name, description, nameKz, descriptionKz, nameRu, descriptionRu, trainer);
+            CourseSection courseSection = new CourseSection("Certificate section");
+            courseSection = courseSectionService.saveCourseSection(courseSection);
+            Course course = new Course(name, description, nameKz, descriptionKz, nameRu, descriptionRu, trainer, courseSection);
             course = courseService.saveCourse(course);
             return ResponseEntity.ok(course);
         } catch (Exception e) {
