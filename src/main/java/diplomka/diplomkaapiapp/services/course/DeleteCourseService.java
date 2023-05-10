@@ -16,6 +16,8 @@ public class DeleteCourseService {
 
     public void deleteCourse(Course course) {
         course.setStudents(null);
+        course.setSections(null);
+        course.setClosedStudents(null);
         courseRepository.save(course);
         courseRepository.delete(course);
     }
