@@ -46,4 +46,9 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page, limit);
         return courseRepository.findAllByStudentsContaining(student, pageable);
     }
+
+    public List<Course> getAllCoursesByTrainer(User trainer, int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return courseRepository.findAllByTrainerOrderByNameAsc(trainer, pageable);
+    }
 }
