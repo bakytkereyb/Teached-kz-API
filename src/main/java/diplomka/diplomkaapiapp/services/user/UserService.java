@@ -4,12 +4,17 @@ import diplomka.diplomkaapiapp.entities.user.Role;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.repositories.user.RoleRepository;
 import diplomka.diplomkaapiapp.repositories.user.UserRepository;
+import diplomka.diplomkaapiapp.services.jwt.JwtService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,10 +33,14 @@ import java.util.UUID;
 @Slf4j
 public class UserService {
 //public class UserService {
+    private final String baseURL = "http://localhost:8080";
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
 
+    private final JavaMailSender mailSender;
+
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public User saveUser(User user) throws Exception {
         User existingUser = userRepository.findByUsername(user.getUsername()).orElse(null);
@@ -57,6 +66,24 @@ public class UserService {
     public List<User> getAllUsers(int page, int limit) {
         Pageable pageable = PageRequest.of(page, limit);
         return userRepository.findAll(pageable).getContent();
+    }
+
+    public void sendEmailConfirmationMessage(User user) throws MessagingException {
+        String jwtToken = baseURL + "/api/user/confirm/" + jwtService.generateToken(user);
+        sendMessageToEmail(user.getEmail(), "Email confirmation", jwtToken);
+    }
+
+    private void sendMessageToEmail(String toEmail,
+                                    String subject,
+                                    String body) throws MessagingException {
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+        helper.setText(body, true); // Use this or above line.
+        helper.setTo(toEmail);
+        helper.setSubject(subject);
+
+        mailSender.send(mimeMessage);
     }
 
 //    public List<User> getAllUsersByRole(int skip, int limit, Role role) {
