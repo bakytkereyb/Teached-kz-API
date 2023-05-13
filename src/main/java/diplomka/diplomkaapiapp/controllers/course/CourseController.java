@@ -1,14 +1,14 @@
 package diplomka.diplomkaapiapp.controllers.course;
 
-import diplomka.diplomkaapiapp.entities.course.Course;
-import diplomka.diplomkaapiapp.entities.course.CourseSection;
-import diplomka.diplomkaapiapp.entities.course.CourseStatus;
-import diplomka.diplomkaapiapp.entities.course.CourseUserStatus;
+import diplomka.diplomkaapiapp.entities.course.*;
+import diplomka.diplomkaapiapp.entities.file.File;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.request.ListPagination.ListPagination;
 import diplomka.diplomkaapiapp.services.course.CourseSectionService;
 import diplomka.diplomkaapiapp.services.course.CourseService;
 import diplomka.diplomkaapiapp.services.course.DeleteCourseService;
+import diplomka.diplomkaapiapp.services.course.TaskFilesService;
+import diplomka.diplomkaapiapp.services.file.FileService;
 import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,11 +19,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,10 +39,12 @@ import java.util.UUID;
 public class CourseController {
 
     private final CourseService courseService;
+    private final TaskFilesService taskFilesService;
     private final CourseSectionService courseSectionService;
     private final DeleteCourseService deleteCourseService;
     private final UserService userService;
     private final JwtService jwtService;
+    private final FileService fileService;
 
     @GetMapping("/get/{id}")
     @Operation(
@@ -80,9 +84,13 @@ public class CourseController {
                             courseSection.getClosedStudents().stream()
                                     .anyMatch(closedStudent -> closedStudent.getId().equals(user.getId()))
                     );
-                    if (courseSection.isClosed()) {
+                    if (courseSection.isClosed() || courseSection.getTasks().isEmpty()) {
                         progress[0]++;
                     }
+                    courseSection.getTasks().forEach(task -> {
+                        TaskFiles taskFiles = taskFilesService.getTaskFilesByTaskAndStudent(task, user);
+                        task.setTaskFiles(taskFiles);
+                    });
                 });
                 course.setProgress(progress[0]);
 
@@ -94,6 +102,240 @@ public class CourseController {
             }
 
             return ResponseEntity.ok(course);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/section/{sectionId}/task/{taskId}")
+    public ResponseEntity getTaskOfCourse(@PathVariable UUID id,
+                                          @PathVariable UUID sectionId,
+                                          @PathVariable UUID taskId,
+                                          @RequestHeader(value="Authorization") String token) {
+        try {
+            String username = jwtService.extractUsername(token);
+            User user = userService.getUserByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+
+            Course course = courseService.getCourseById(id);
+            if (course == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+            }
+            final Task[] task = {null};
+            course.getSections().forEach(section -> {
+                if (section.getId().equals(sectionId)) {
+                    section.getTasks().forEach(sectionTask -> {
+                        if (sectionTask.getId().equals(taskId)) {
+                            task[0] = sectionTask;
+                        }
+                    });
+                }
+            });
+            if (task[0] == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("task not found");
+            }
+            TaskFiles taskFiles = taskFilesService.getTaskFilesByTaskAndStudent(task[0], user);
+            task[0].setTaskFiles(taskFiles == null ? new TaskFiles() : taskFiles);
+            return ResponseEntity.ok(task[0]);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/section/{sectionId}/task/{taskId}/submit")
+    public ResponseEntity submitTaskFiles(@PathVariable UUID id,
+                                          @PathVariable UUID sectionId,
+                                          @PathVariable UUID taskId,
+                                          @RequestHeader(value="Authorization") String token,
+                                          @RequestParam("fileNames") String[] fileNames) {
+        try {
+            String username = jwtService.extractUsername(token);
+            User user = userService.getUserByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+
+            Course course = courseService.getCourseById(id);
+            if (course == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+            }
+            if (!course.getStudents().stream().anyMatch(student -> student.getId().equals(user.getId()))) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("student not found in course");
+            }
+
+            final Task[] task = {null};
+            course.getSections().forEach(section -> {
+                if (section.getId().equals(sectionId)) {
+                    section.getTasks().forEach(sectionTask -> {
+                        if (sectionTask.getId().equals(taskId)) {
+                            task[0] = sectionTask;
+                        }
+                    });
+                }
+            });
+
+            if (task[0] == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("task not found");
+            }
+            TaskFiles taskFiles = taskFilesService.getTaskFilesByTaskAndStudent(task[0], user);
+            if (taskFiles == null) {
+                taskFiles = new TaskFiles();
+            }
+
+            taskFiles.setStudent(user);
+            taskFiles.setTask(task[0]);
+            List<File> files = new ArrayList<>();
+            for (String fileName : fileNames) {
+                File file = new File(fileName, fileName);
+                file = fileService.saveFile(file);
+                files.add(file);
+            }
+            taskFiles.setFiles(files);
+            taskFiles.setSubmittedAt(LocalDateTime.now());
+
+            taskFiles = taskFilesService.saveTaskFiles(taskFiles);
+
+            return ResponseEntity.ok(taskFiles);
+
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/section/{sectionId}/task/{taskId}/grade")
+    public ResponseEntity gradeTaskByStudent(@PathVariable UUID id,
+                                             @PathVariable UUID sectionId,
+                                             @PathVariable UUID taskId,
+                                             @RequestParam("grade") Double grade,
+                                             @RequestParam(value = "comment", required = false) String comment,
+                                             @RequestParam("studentId") UUID studentId) {
+        try {
+            User user = userService.getUserById(studentId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+
+            Course course = courseService.getCourseById(id);
+            if (course == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+            }
+            if (!course.getStudents().stream().anyMatch(student -> student.getId().equals(user.getId()))) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("student not found in course");
+            }
+
+            final Task[] task = {null};
+            final CourseSection[] courseSection = {null};
+            course.getSections().forEach(section -> {
+                if (section.getId().equals(sectionId)) {
+                    section.getTasks().forEach(sectionTask -> {
+                        if (sectionTask.getId().equals(taskId)) {
+                            task[0] = sectionTask;
+                            courseSection[0] = section;
+                        }
+                    });
+                }
+            });
+
+            if (task[0] == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("task not found");
+            }
+            TaskFiles taskFiles = taskFilesService.getTaskFilesByTaskAndStudent(task[0], user);
+            if (taskFiles == null) {
+                taskFiles = new TaskFiles();
+            }
+
+            taskFiles.setStudent(user);
+            taskFiles.setTask(task[0]);
+            taskFiles.setGrade(grade);
+            taskFiles.setComment(comment);
+
+            taskFiles = taskFilesService.saveTaskFiles(taskFiles);
+            closeCourseSectionByStudent(courseSection[0].getId(), user);
+            closeCourseByStudent(course.getId(), user);
+            return ResponseEntity.ok(taskFiles);
+
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    private void closeCourseByStudent(UUID courseId, User student) {
+        Course course = courseService.getCourseById(courseId);
+        if (course == null) {
+            return;
+        }
+        boolean isClosed = true;
+        for (CourseSection section : course.getSections()) {
+             if (
+                     section.getClosedStudents().stream()
+                             .noneMatch(closedStudent -> closedStudent.getId().equals(student.getId()))
+             ) {
+                 isClosed = false;
+             }
+        }
+        if (isClosed) {
+            course.addClosedStudent(student);
+            courseService.saveCourse(course);
+        }
+    }
+
+    private void closeCourseSectionByStudent(UUID sectionId, User student) {
+        CourseSection section = courseSectionService.getCourseSectionById(sectionId);
+        if (section == null) {
+            return;
+        }
+        boolean isClosed = true;
+        for (Task task : section.getTasks()) {
+            TaskFiles taskFiles = taskFilesService.getTaskFilesByTaskAndStudent(task, student);
+            if (taskFiles == null) {
+                isClosed = false;
+                continue;
+            }
+            if (taskFiles.status() != TaskStatus.GRADED) {
+                isClosed = false;
+            }
+        }
+        if (isClosed) {
+            section.addClosedStudent(student);
+            courseSectionService.saveCourseSection(section);
+        }
+    }
+
+    @GetMapping("/{id}/get/students")
+    public ResponseEntity getStudentOfCourse(@PathVariable UUID id,
+                                             @RequestParam("page") Integer page,
+                                             @RequestParam("limit") Integer limit) {
+        try {
+            Course course = courseService.getCourseById(id);
+            if (course == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+            }
+            Pageable pageable = PageRequest.of(page, limit);
+            int start = (int)pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), course.getStudents().size());
+            if (start <= end) {
+                List<User> students = course.getStudents().subList(start, end);
+
+                pageable = PageRequest.of(page + 1, limit);
+                start = (int)pageable.getOffset();
+                end = Math.min((start + pageable.getPageSize()), course.getStudents().size());
+
+                List<User> nextStudents = new ArrayList<>();
+                if (start <= end) {
+                    nextStudents = course.getStudents().subList(start, end);
+                }
+
+
+                ListPagination<User> listPagination = new ListPagination<>(students, !nextStudents.isEmpty());
+                return ResponseEntity.ok(listPagination);
+            }
+            return ResponseEntity.ok(new ListPagination<>(new ArrayList<>(), false));
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -138,9 +380,6 @@ public class CourseController {
                                         @RequestParam(value = "status", required = false) CourseStatus status) {
         try {
             if (status != null) {
-                if (status != CourseStatus.PRIVATE && status != CourseStatus.PUBLIC) {
-                    return ResponseEntity.badRequest().body("invalid course status");
-                }
                 List<Course> courses = courseService.getAllCoursesByStatus(page, limit, status);
                 List<Course> nextCourses = courseService.getAllCoursesByStatus(page + 1, limit, status);
 
@@ -266,7 +505,7 @@ public class CourseController {
                             courseSection.getClosedStudents().stream()
                                     .anyMatch(closedStudent -> closedStudent.getId().equals(user.getId()))
                     );
-                    if (courseSection.isClosed()) {
+                    if (courseSection.isClosed() || courseSection.getTasks().isEmpty()) {
                         progress[0]++;
                     }
                 });
@@ -276,6 +515,29 @@ public class CourseController {
                     course.getCertificateSection().setClosed(true);
                 }
             });
+
+            return ResponseEntity.ok(listPagination);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping ("/get/training")
+    public ResponseEntity getAllTrainingCourses(@RequestHeader(value="Authorization") String token,
+                                                @RequestParam("page") Integer page,
+                                                @RequestParam("limit") Integer limit
+    ) {
+        try {
+            String username = jwtService.extractUsername(token);
+            User user = userService.getUserByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+            List<Course> courses = courseService.getAllCoursesByTrainer(user, page, limit);
+            List<Course> nextCourses = courseService.getAllCoursesByTrainer(user, page + 1, limit);
+
+            ListPagination<Course> listPagination = new ListPagination<>(courses, !nextCourses.isEmpty());
 
             return ResponseEntity.ok(listPagination);
         } catch (Exception e) {
