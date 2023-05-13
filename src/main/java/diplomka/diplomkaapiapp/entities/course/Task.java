@@ -39,11 +39,6 @@ public class Task {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy("createdAt DESC")
-    @JsonIgnore
-    private List<TaskFiles> files;
-
     public Task(LocalDateTime deadline, String name, String description) {
         this.deadline = deadline;
         this.name = name;
@@ -51,10 +46,13 @@ public class Task {
     }
 
     @Transient
-    private boolean isEditable() {
+    public boolean isEditable() {
         if (deadline == null) {
             return true;
         }
         return LocalDateTime.now().isBefore(deadline);
     }
+
+    @Transient
+    public TaskFiles taskFiles;
 }
