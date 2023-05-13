@@ -3,6 +3,7 @@ package diplomka.diplomkaapiapp.entities.user;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
+import diplomka.diplomkaapiapp.entities.file.File;
 import diplomka.diplomkaapiapp.request.UserPut;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -96,6 +97,9 @@ public class User implements UserDetails {
 
     private Boolean isConfirmed = false;
 
+    @Column(columnDefinition = "TEXT")
+    private String imageFileName = "defaultUser.png";
+
 //    @Transient
 //    private CompetenceBank competenceBank;
 
@@ -104,9 +108,9 @@ public class User implements UserDetails {
     private Collection<Role> roles = new ArrayList<>();
 
     public void addRole(Role role) {
-        if (this.roles.stream().noneMatch(userRole -> userRole.getRoleName().equals(role.getRoleName()))) {
-            this.roles.add(role);
-        }
+        Collection<Role> newRoles = new ArrayList<>();
+        newRoles.add(role);
+        this.roles = newRoles;
     }
 
     @JsonIgnore
