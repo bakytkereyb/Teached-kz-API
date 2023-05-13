@@ -1,6 +1,8 @@
 package diplomka.diplomkaapiapp.services.course;
 
+import diplomka.diplomkaapiapp.entities.course.Task;
 import diplomka.diplomkaapiapp.entities.course.TaskFiles;
+import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.repositories.course.TaskFilesRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +23,8 @@ public class TaskFilesService {
     }
     public TaskFiles getTaskFilesById(UUID id) {
         return taskFilesRepository.findById(id).orElse(null);
+    }
+    public TaskFiles getTaskFilesByTaskAndStudent(Task task, User student) {
+        return taskFilesRepository.findByTaskAndStudent(task, student);
     }
 }
