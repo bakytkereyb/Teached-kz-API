@@ -1,6 +1,7 @@
 package diplomka.diplomkaapiapp.entities.course;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.entities.file.File;
 import diplomka.diplomkaapiapp.entities.user.User;
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,12 +31,18 @@ public class TaskFiles {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("createdAt ASC")
     @NotNull
-    private List<File> files;
+    private List<File> files = new ArrayList<>();
+
+    private LocalDateTime submittedAt;
 
     private Double grade;
 
     @Column(columnDefinition = "TEXT")
     private String comment;
+
+    @ManyToOne
+    @JsonIgnore
+    private Task task;
 
     @Transient
     @JsonGetter
@@ -52,5 +60,7 @@ public class TaskFiles {
 
     @ManyToOne
     @NotNull
+    @JsonIgnore
     private User student;
+
 }
