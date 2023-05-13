@@ -59,6 +59,41 @@ public class UserController {
         }
     }
 
+    @PostMapping("/{id}/send/confirmation")
+    public ResponseEntity sendConfirmation(@PathVariable UUID id,
+                                           @RequestParam("email") String email) {
+        try {
+            User user = userService.getUserById(id);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+            user.setEmail(email);
+            user = userService.updateUser(user);
+            userService.sendEmailConfirmationMessage(user);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/confirm/{token}")
+    public ResponseEntity confirmUserEmail(@PathVariable String token) {
+        try {
+            String username = jwtService.extractUsername(token);
+            User user = userService.getUserByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+            user.setIsConfirmed(true);
+            user = userService.updateUser(user);
+            return ResponseEntity.ok(new String("confirmed"));
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/{username}")
     public ResponseEntity updateUserById(@RequestBody UserPut userPut) {
         try {
@@ -112,6 +147,23 @@ public class UserController {
             Role userRole = roleService.getRoleByName("trainer");
             user.addRole(userRole);
             return ResponseEntity.ok(userService.saveUser(user));
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/change/image")
+    public ResponseEntity changeImageOfUser(@PathVariable UUID id,
+                                            @RequestParam("imageFileName") String imageFileName) {
+        try {
+            User user = userService.getUserById(id);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+            }
+            user.setImageFileName(imageFileName);
+            user = userService.updateUser(user);
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
