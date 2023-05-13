@@ -37,7 +37,8 @@ public class SecurityConfig {
                         "/techgeeknext-openapi/**",
                         "/api-docs/**",
                         "/docs/**",
-                        "/api/file/**"
+                        "/api/file/**",
+                        "/api/user/confirm/**"
                         )
                     .permitAll();
 
