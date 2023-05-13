@@ -35,11 +35,11 @@ public class CourseSection {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("createdAt ASC")
-    private List<File> files;
+    private List<File> files = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("createdAt ASC")
-    private List<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
 
     public void addFile(File file) {
         this.files.add(file);
@@ -47,10 +47,13 @@ public class CourseSection {
     public void addTask(Task task) {
         this.tasks.add(task);
     }
+    public void addClosedStudent(User closedStudent) {
+        this.closedStudents.add(closedStudent);
+    }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
-    private Collection<User> closedStudents = new ArrayList<>();
+    private List<User> closedStudents = new ArrayList<>();
 
     public CourseSection(String name) {
         this.name = name;
