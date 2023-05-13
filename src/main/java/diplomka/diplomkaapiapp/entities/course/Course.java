@@ -67,7 +67,7 @@ public class Course {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("createdAt ASC")
-    private List<CourseSection> sections;
+    private List<CourseSection> sections = new ArrayList<>();
 
     public void addSection(CourseSection section) {
         this.sections.add(section);
@@ -85,18 +85,27 @@ public class Course {
     private User trainer;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Collection<User> students = new ArrayList<>();
+    private List<User> students = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
-    private Collection<User> closedStudents = new ArrayList<>();
+    private List<User> closedStudents = new ArrayList<>();
 
     @Transient
     private Integer progress;
     @Transient
     @JsonGetter
     public Integer maxProgress() {
-        return sections == null ? 0 : sections.size();
+        int maxProgressNum = 0;
+        if (sections == null) {
+            return maxProgressNum;
+        }
+        for (CourseSection section : sections) {
+            if (!section.getTasks().isEmpty()) {
+                maxProgressNum++;
+            }
+        }
+        return maxProgressNum;
     }
 
     @Transient
@@ -117,5 +126,8 @@ public class Course {
 
     public void addStudent(User student) {
         this.students.add(student);
+    }
+    public void addClosedStudent(User student) {
+        this.closedStudents.add(student);
     }
 }
