@@ -17,5 +17,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID>, 
     Optional<User> findByUsername(String username);
 //    List<User> findAllByRolesContaining(Role role, Pageable pageable);
     List<User> findAllByRolesContaining(Role role);
+    List<User> findAllByFirstNameContainingIgnoreCaseOrSecondNameContainingIgnoreCaseOrMiddleNameContainsIgnoreCase(String firstName, String secondName, String middleName, Pageable pageable);
 //    List<User> findAll(Pageable pageable);
 }

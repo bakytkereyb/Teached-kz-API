@@ -38,7 +38,10 @@ public class SecurityConfig {
                         "/api-docs/**",
                         "/docs/**",
                         "/api/file/**",
-                        "/api/user/confirm/**"
+                        "/api/user/confirm/**",
+                        "/ws/**",
+                        "/chat/ws/**",
+                        "/chat/**"
                         )
                     .permitAll();
 

@@ -68,6 +68,13 @@ public class UserService {
         return userRepository.findAll(pageable).getContent();
     }
 
+    public List<User> getAllUsersByName(String name, int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return userRepository
+                .findAllByFirstNameContainingIgnoreCaseOrSecondNameContainingIgnoreCaseOrMiddleNameContainsIgnoreCase
+                        (name, name, name, pageable);
+    }
+
     public void sendEmailConfirmationMessage(User user) throws MessagingException {
         String jwtToken = baseURL + "/api/user/confirm/" + jwtService.generateToken(user);
         sendMessageToEmail(user.getEmail(), "Email confirmation", jwtToken);

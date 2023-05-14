@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -211,6 +212,22 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
             }
             return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity getUsersByFullName(@RequestParam("page") Integer page,
+                                             @RequestParam("limit") Integer limit,
+                                             @RequestParam("name") String name) {
+        try {
+            List<User> users = userService.getAllUsersByName(name, page, limit);
+            List<User> nextUsers = userService.getAllUsersByName(name, page + 1, limit);
+            ListPagination<User> listPagination = new ListPagination<>(users, !nextUsers.isEmpty());
+
+            return ResponseEntity.ok(listPagination);
         } catch (Exception e) {
             log.error(e.toString());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());

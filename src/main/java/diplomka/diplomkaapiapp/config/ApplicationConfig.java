@@ -1,6 +1,8 @@
 package diplomka.diplomkaapiapp.config;
 
 import diplomka.diplomkaapiapp.repositories.user.UserRepository;
+import diplomka.diplomkaapiapp.services.chat.ChatService;
+import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
