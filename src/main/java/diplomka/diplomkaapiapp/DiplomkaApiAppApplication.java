@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp;
 
+import diplomka.diplomkaapiapp.constants.EnvironmentProperties;
 import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import diplomka.diplomkaapiapp.entities.user.Role;
 import diplomka.diplomkaapiapp.services.competence.bank.CompetenceBankService;
@@ -26,7 +27,7 @@ import org.springframework.context.ConfigurableApplicationContext;
         info = @Info(title = "TeachEd Documentation", version = "1.0.0"),
         security = { @SecurityRequirement(name = "Authorization") },
         servers = {
-            @Server(url = "http://localhost:8080", description = "Default Server URL")
+            @Server(url = EnvironmentProperties.SERVER_URL, description = "Default Server URL")
         }
 )
 public class DiplomkaApiAppApplication {

@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.services.user;
 
+import diplomka.diplomkaapiapp.constants.EnvironmentProperties;
 import diplomka.diplomkaapiapp.entities.user.Role;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.repositories.user.RoleRepository;
@@ -33,7 +34,7 @@ import java.util.UUID;
 @Slf4j
 public class UserService {
 //public class UserService {
-    private final String baseURL = "http://localhost:8080";
+    private final String baseURL = EnvironmentProperties.SERVER_URL;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
 
