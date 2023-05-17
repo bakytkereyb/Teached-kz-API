@@ -9,6 +9,10 @@ import diplomka.diplomkaapiapp.services.application.ApplicationService;
 import diplomka.diplomkaapiapp.services.file.FileService;
 import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.UserService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +36,14 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @PostMapping("/save")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Application.class))})
+    })
     public ResponseEntity saveApplication(@RequestHeader(value="Authorization") String token,
                                           @RequestParam("title") String title,
                                           @RequestParam("body") String body) {
@@ -51,6 +63,14 @@ public class ApplicationController {
     }
 
     @GetMapping("/get")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ListPagination.class))})
+    })
     public ResponseEntity getAllApplications(@RequestParam("page") Integer page,
                                              @RequestParam("limit") Integer limit) {
         try {
@@ -67,6 +87,14 @@ public class ApplicationController {
     }
 
     @GetMapping("/get/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Application.class))})
+    })
     public ResponseEntity getApplicationById(@PathVariable UUID id) {
         try {
             Application application = applicationService.getApplicationById(id);
@@ -83,6 +111,14 @@ public class ApplicationController {
     }
 
     @PatchMapping("/{id}/status")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Application.class))})
+    })
     public ResponseEntity changeApplicationStatus(@PathVariable UUID id,
                                                   @RequestParam("status") ApplicationStatus status) {
         try {
@@ -104,6 +140,14 @@ public class ApplicationController {
     }
 
     @GetMapping("/get/my")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ListPagination.class))})
+    })
     public ResponseEntity getAllMyApplications(@RequestParam("page") Integer page,
                                                @RequestParam("limit") Integer limit,
                                                @RequestHeader(value="Authorization") String token) {
