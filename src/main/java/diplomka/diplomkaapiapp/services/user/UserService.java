@@ -52,6 +52,14 @@ public class UserService {
         throw new Exception("User already exists");
     }
 
+    public long countAllUsers() {
+        return userRepository.count();
+    }
+
+    public long countUsersByRole(Role role) {
+        return userRepository.countByRolesContaining(role);
+    }
+
     public User updateUser(User user) {
         return userRepository.save(user);
     }
