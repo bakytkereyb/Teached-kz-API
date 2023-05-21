@@ -3,11 +3,9 @@ package diplomka.diplomkaapiapp.controllers.analytics;
 import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import diplomka.diplomkaapiapp.entities.competence.bank.ComponentBank;
 import diplomka.diplomkaapiapp.entities.competence.bank.QuestionnaireBank;
+import diplomka.diplomkaapiapp.entities.course.Course;
 import diplomka.diplomkaapiapp.entities.user.Role;
-import diplomka.diplomkaapiapp.request.analytics.CompetenceAnalytics;
-import diplomka.diplomkaapiapp.request.analytics.ComponentAnalytics;
-import diplomka.diplomkaapiapp.request.analytics.QuestionnaireAnalytics;
-import diplomka.diplomkaapiapp.request.analytics.UserAnalytics;
+import diplomka.diplomkaapiapp.request.analytics.*;
 import diplomka.diplomkaapiapp.services.competence.bank.AnswerMapService;
 import diplomka.diplomkaapiapp.services.competence.bank.CompetenceBankService;
 import diplomka.diplomkaapiapp.services.competence.bank.ComponentBankService;
@@ -20,14 +18,13 @@ import diplomka.diplomkaapiapp.services.user.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/analytics")
@@ -103,14 +100,29 @@ public class AnalyticsController {
 
     }
 
-//    @GetMapping("/courses")
-//    public ResponseEntity getAnalyticsOfCourses() {
-//        try {
-//
-//        } catch (Exception e) {
-//            log.error(e.toString());
-//            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-//        }
-//    }
+    @GetMapping("/course/{id}")
+    public ResponseEntity getAnalyticsOfCourseById(@PathVariable UUID id) {
+        try {
+            Course course = courseService.getCourseById(id);
+            if (course == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+            }
+            CourseAnalytics courseAnalytics = new CourseAnalytics(
+                    course.getId(),
+                    course.getName(),
+                    course.getNameKz(),
+                    course.getNameRu(),
+                    course.getDescription(),
+                    course.getDescriptionKz(),
+                    course.getDescriptionRu(),
+                    course.getClosedStudents().size(),
+                    course.getStudents().size()
+            );
+            return ResponseEntity.ok(courseAnalytics);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
 
 }

@@ -1,12 +1,20 @@
 package diplomka.diplomkaapiapp.request.analytics;
 
-import diplomka.diplomkaapiapp.entities.course.Course;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
+import java.util.UUID;
 
 @Data
+@AllArgsConstructor
 public class CourseAnalytics {
-    private long numberOfCourses;
-    private List<Course> courses;
+    private UUID id;
+    private String name;
+    private String nameKz;
+    private String nameRu;
+    private String description;
+    private String descriptionKz;
+    private String descriptionRu;
+    private int closedStudents;
+    private int totalStudents;
 }
