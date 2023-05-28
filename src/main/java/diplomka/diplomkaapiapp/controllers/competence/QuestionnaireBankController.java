@@ -4,10 +4,12 @@ import diplomka.diplomkaapiapp.entities.competence.QuestionType;
 import diplomka.diplomkaapiapp.entities.competence.Status;
 import diplomka.diplomkaapiapp.entities.competence.bank.*;
 import diplomka.diplomkaapiapp.entities.competence.map.AnswerMap;
+import diplomka.diplomkaapiapp.entities.course.Course;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.request.anketaCreate.QuestionnaireCreate;
 import diplomka.diplomkaapiapp.request.anketaPass.AnswerPass;
 import diplomka.diplomkaapiapp.services.competence.bank.*;
+import diplomka.diplomkaapiapp.services.course.CourseService;
 import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.UserService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,6 +44,7 @@ public class QuestionnaireBankController {
     private final DeleteCompetenceBankService deleteCompetenceBankService;
     private final JwtService jwtService;
     private final UserService userService;
+    private final CourseService courseService;
 
     @PostMapping("/save")
     @ApiResponses(value = {
@@ -55,6 +58,14 @@ public class QuestionnaireBankController {
     public ResponseEntity saveQuestionnaireBank(@RequestBody QuestionnaireCreate questionnaireCreate,
                                                 @RequestParam("componentId")UUID componentId) {
         try {
+            Course course = null;
+            if (questionnaireCreate.getCourseId() != null) {
+                course = courseService.getCourseById(questionnaireCreate.getCourseId());
+                if (course == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("course not found");
+                }
+            }
+
             ComponentBank componentBank = componentBankService.getComponentById(componentId);
             if (componentBank == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("component bank not found");
@@ -114,6 +125,7 @@ public class QuestionnaireBankController {
 
             questionnaireBank.setMaxPoint(questionnaireMaxPoint[0]);
             questionnaireBank.setSectionBankList(sectionBankList);
+            questionnaireBank.setCourse(course);
 
             questionnaireBank = questionnaireBankService.saveQuestionnaireBank(questionnaireBank);
 

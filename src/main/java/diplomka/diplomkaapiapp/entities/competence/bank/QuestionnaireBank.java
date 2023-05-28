@@ -2,6 +2,7 @@ package diplomka.diplomkaapiapp.entities.competence.bank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.entities.competence.Status;
+import diplomka.diplomkaapiapp.entities.course.Course;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.request.anketaCreate.QuestionnaireCreate;
 import jakarta.persistence.*;
@@ -42,6 +43,9 @@ public class QuestionnaireBank {
     private String nameRu;
 
     private Double maxPoint;
+
+    @ManyToOne
+    private Course course;
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
