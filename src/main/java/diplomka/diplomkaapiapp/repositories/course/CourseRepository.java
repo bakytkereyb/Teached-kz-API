@@ -18,7 +18,7 @@ public interface CourseRepository extends JpaRepository<Course, UUID>, PagingAnd
 //    List<Course> findAll(Pageable pageable);
     Optional<Course> findById(UUID id);
     List<Course> findAllByStatus(CourseStatus courseStatus, Pageable pageable);
-    List<Course> findAllByStatusWithoutPage(CourseStatus courseStatus);
+    List<Course> findAllByStatus(CourseStatus courseStatus);
     List<Course> findAllByStudentsContaining(User student, Pageable pageable);
     List<Course> findAllByTrainerOrderByNameAsc(User trainer, Pageable pageable);
 }

@@ -47,7 +47,7 @@ public class CourseService {
     }
 
     public List<Course> getAllCoursesByStatusWithoutPage(CourseStatus status) {
-        return courseRepository.findAllByStatusWithoutPage(status);
+        return courseRepository.findAllByStatus(status);
     }
 
     public List<Course> getAllCoursesByStudent(User student, int page, int limit) {
