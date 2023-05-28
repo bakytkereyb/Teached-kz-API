@@ -399,6 +399,23 @@ public class CourseController {
         }
     }
 
+    @GetMapping("/get/withoutPage")
+    public ResponseEntity getAllCoursesWithoutPage(@RequestParam(value = "status", required = false) CourseStatus status) {
+        try {
+            if (status != null) {
+                List<Course> courses = courseService.getAllCoursesByStatusWithoutPage(status);
+
+                return ResponseEntity.ok(courses);
+            }
+            List<Course> courses = courseService.getAllCourseWithoutPageable();
+
+            return ResponseEntity.ok(courses);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/{id}/add/section")
     public ResponseEntity addSection(@RequestParam("name") String name,
                                      @PathVariable UUID id) {

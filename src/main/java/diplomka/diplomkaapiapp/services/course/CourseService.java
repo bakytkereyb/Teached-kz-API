@@ -46,6 +46,10 @@ public class CourseService {
         return courseRepository.findAllByStatus(status,pageable);
     }
 
+    public List<Course> getAllCoursesByStatusWithoutPage(CourseStatus status) {
+        return courseRepository.findAllByStatusWithoutPage(status);
+    }
+
     public List<Course> getAllCoursesByStudent(User student, int page, int limit) {
         Pageable pageable = PageRequest.of(page, limit);
         return courseRepository.findAllByStudentsContaining(student, pageable);
