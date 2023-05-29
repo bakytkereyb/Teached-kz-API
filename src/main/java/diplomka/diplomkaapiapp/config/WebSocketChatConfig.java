@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.config;
 
+import diplomka.diplomkaapiapp.constants.EnvironmentProperties;
 import diplomka.diplomkaapiapp.entities.chat.Chat;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.services.chat.ChatService;
@@ -40,7 +41,7 @@ public class WebSocketChatConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000", "http://85.159.27.230:8080").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000", EnvironmentProperties.SERVER_URL).withSockJS();
 
     }
 
