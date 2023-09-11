@@ -52,5 +52,8 @@ public class DiplomkaApiAppApplication {
         FilesStorageService filesStorageService = configurableApplicationContext.getBean(FilesStorageService.class);
         filesStorageService.init();
 
+        userService.initAdmin();
+        userService.initDefaultTrainer();
+        userService.initDefaultUser();
     }
 }

@@ -59,14 +59,14 @@ public class CompetenceBankController {
                             section.getQuestionBankList().forEach(question -> {
                                 List<AnswerMap> userAnswers = answerMapService.getAllAnswersByQuestionAndUser(question, user);
                                 question.setAnswerMapList(userAnswers);
-                                Double questionPoint = getPointQuestion(question);
+                                Double questionPoint = question.getPointQuestion(question);
                                 pointSection[0] += questionPoint;
                                 question.setPoint(questionPoint);
-                                if (user.isAdmin()) {
-                                    question.getAnswerBankList().forEach(answerBank -> {
-                                        answerBank.setIsCorrectPublic(answerBank.getIsCorrect());
-                                    });
-                                }
+//                                if (user.isAdmin()) {
+//                                    question.getAnswerBankList().forEach(answerBank -> {
+//                                        answerBank.setIsCorrectPublic(answerBank.getIsCorrect());
+//                                    });
+//                                }
                             });
                             section.setPoint(pointSection[0]);
                             anketaPoint[0] += pointSection[0];
@@ -106,14 +106,14 @@ public class CompetenceBankController {
                             section.getQuestionBankList().forEach(question -> {
                                 List<AnswerMap> userAnswers = answerMapService.getAllAnswersByQuestionAndUser(question, user);
                                 question.setAnswerMapList(userAnswers);
-                                Double questionPoint = getPointQuestion(question);
+                                Double questionPoint = question.getPointQuestion(question);
                                 pointSection[0] += questionPoint;
                                 question.setPoint(questionPoint);
-                                if (user.isAdmin()) {
-                                    question.getAnswerBankList().forEach(answerBank -> {
-                                        answerBank.setIsCorrectPublic(answerBank.getIsCorrect());
-                                    });
-                                }
+//                                if (user.isAdmin()) {
+//                                    question.getAnswerBankList().forEach(answerBank -> {
+//                                        answerBank.setIsCorrectPublic(answerBank.getIsCorrect());
+//                                    });
+//                                }
                             });
                             section.setPoint(pointSection[0]);
                             anketaPoint[0] += pointSection[0];
@@ -132,70 +132,88 @@ public class CompetenceBankController {
         }
     }
 
-    private Double getPointQuestion(QuestionBank questionBank) {
-        Double[] point = {0.0};
-        if (questionBank.getType() == QuestionType.OPEN) {
-            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
-                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
-                    .collect(Collectors.toList());
-            if (answerMapList.size() == 0) {
-                return 0.0;
-            }
-            if (answerMapList.get(0).getIsSelected() == null) {
-                return 0.0;
-            }
-            if (answerMapList.get(0).getIsSelected()) {
-                return 1.0;
-            } else {
-                return 0.0;
-            }
-        }
-        if (questionBank.getType() == QuestionType.LIST) {
-            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
-                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
-                    .collect(Collectors.toList());
-            if (answerMapList.size() == 0) {
-                return 0.0;
-            }
-            for (AnswerMap answerMap : answerMapList) {
-                if (answerMap.getIsSelected() != null) {
-                    if (answerMap.getAnswerBank().getIsCorrect()) {
-                        if (answerMap.getIsSelected()) {
-                            point[0] += 1.0;
-                        }
-                    }
-                }
-            }
-            if (point[0] > 0.0) {
-                return 1.0;
-            } else {
-                return 0.0;
-            }
-        }
-        if (questionBank.getType() == QuestionType.MCQ) {
-            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
-                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
-                    .collect(Collectors.toList());
-            if (answerMapList.size() == 0) {
-                return 0.0;
-            }
-            Double divideNum = 1.0;
-            for (AnswerMap answerMap : answerMapList) {
-                if (answerMap.getIsSelected() != null) {
-                    if (answerMap.getAnswerBank().getIsCorrect()) {
-                        if (answerMap.getIsSelected()) {
-                            point[0] += 1.0;
-                        }
-                    } else {
-                        if (answerMap.getIsSelected()) {
-                            divideNum += 1.0;
-                        }
-                    }
-                }
-            }
-
-            point[0] /= divideNum;
-        }
-        return point[0];
-    }
+//    private Double getPointQuestion(QuestionBank questionBank) {
+//        Double[] point = {0.0};
+////        if (questionBank.getType() == QuestionType.OPEN) {
+////            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
+////                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
+////                    .collect(Collectors.toList());
+////            if (answerMapList.size() == 0) {
+////                return 0.0;
+////            }
+////            if (answerMapList.get(0).getIsSelected() == null) {
+////                return 0.0;
+////            }
+////            if (answerMapList.get(0).getIsSelected()) {
+////                return 1.0;
+////            } else {
+////                return 0.0;
+////            }
+////        }
+////        if (questionBank.getType() == QuestionType.LIST) {
+////            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
+////                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
+////                    .collect(Collectors.toList());
+////            if (answerMapList.size() == 0) {
+////                return 0.0;
+////            }
+////            for (AnswerMap answerMap : answerMapList) {
+////                if (answerMap.getIsSelected() != null) {
+//////                    if (answerMap.getAnswerBank().getIsCorrect()) {
+//////                        if (answerMap.getIsSelected()) {
+//////                            point[0] += 1.0;
+//////                        }
+//////                    }
+////                    point[0] += answerMap.getAnswerBank().getPoint();
+////                }
+////            }
+////            if (point[0] > 0.0) {
+////                return 1.0;
+////            } else {
+////                return 0.0;
+////            }
+////        }
+////        if (questionBank.getType() == QuestionType.MCQ) {
+////            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
+////                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
+////                    .collect(Collectors.toList());
+////            if (answerMapList.size() == 0) {
+////                return 0.0;
+////            }
+////            Double divideNum = 1.0;
+////            for (AnswerMap answerMap : answerMapList) {
+////                if (answerMap.getIsSelected() != null) {
+////                    if (answerMap.getAnswerBank().getIsCorrect()) {
+////                        if (answerMap.getIsSelected()) {
+////                            point[0] += 1.0;
+////                        }
+////                    } else {
+////                        if (answerMap.getIsSelected()) {
+////                            divideNum += 1.0;
+////                        }
+////                    }
+////                }
+////            }
+////
+////            point[0] /= divideNum;
+////        }
+//
+//        List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
+//                .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
+//                .collect(Collectors.toList());
+//        if (answerMapList.size() == 0) {
+//            return 0.0;
+//        }
+//        for (AnswerMap answerMap : answerMapList) {
+//            if (answerMap.getIsSelected() != null) {
+////                    if (answerMap.getAnswerBank().getIsCorrect()) {
+////                        if (answerMap.getIsSelected()) {
+////                            point[0] += 1.0;
+////                        }
+////                    }
+//                point[0] += answerMap.getAnswerBank().getPoint();
+//            }
+//        }
+//        return point[0];
+//    }
 }

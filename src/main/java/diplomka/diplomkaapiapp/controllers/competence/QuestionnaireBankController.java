@@ -70,18 +70,18 @@ public class QuestionnaireBankController {
             if (componentBank == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("component bank not found");
             }
-            componentBank.setMaxPoint(componentBank.getMaxPoint() == null ? 0.0 : componentBank.getMaxPoint());
+//            componentBank.setMaxPoint(componentBank.getMaxPoint() == null ? 0.0 : componentBank.getMaxPoint());
             List<SectionBank> sectionBankList = new ArrayList<>();
 
             QuestionnaireBank questionnaireBank = new QuestionnaireBank(questionnaireCreate);
 
-            Double[] questionnaireMaxPoint = {0.0};
+//            Double[] questionnaireMaxPoint = {0.0};
 
             questionnaireCreate.getSections().forEach(sectionCreate -> {
                 SectionBank sectionBank = new SectionBank(sectionCreate);
                 List<QuestionBank> questionBankList = new ArrayList<>();
 
-                Double[] sectionMaxPoint = {0.0};
+//                Double[] sectionMaxPoint = {0.0};
 
                 sectionCreate.getQuestions().forEach(questionCreate -> {
                     QuestionBank questionBank = new QuestionBank(questionCreate);
@@ -94,42 +94,46 @@ public class QuestionnaireBankController {
                         answerBank = answerBankService.saveAnswerBank(answerBank);
                         answerBankList.add(answerBank);
 
-                        if (answerCreate.getIsCorrect() == null || answerCreate.getIsCorrect()) {
-                            questionMaxPoint[0] = questionMaxPoint[0] + 1;
+                        if (questionMaxPoint[0] < answerBank.getPoint()) {
+                            questionMaxPoint[0] = answerBank.getPoint();
                         }
+
+//                        if (answerCreate.getIsCorrect() == null || answerCreate.getIsCorrect()) {
+//                            questionMaxPoint[0] = questionMaxPoint[0] + 1;
+//                        }
                     });
 
                     questionBank.setAnswerBankList(answerBankList);
 
                     questionBank.setMaxPoint(questionMaxPoint[0]);
-                    if (questionBank.getType() != QuestionType.MCQ) {
-                        questionBank.setMaxPoint(1.0);
-                    }
+//                    if (questionBank.getType() != QuestionType.MCQ) {
+//                        questionBank.setMaxPoint(1.0);
+//                    }
 
                     questionBank = questionBankService.saveQuestionBank(questionBank);
 
                     questionBankList.add(questionBank);
 
-                    sectionMaxPoint[0] = (sectionMaxPoint[0] + questionBank.getMaxPoint());
+//                    sectionMaxPoint[0] = (sectionMaxPoint[0] + questionBank.getMaxPoint());
                 });
 
                 sectionBank.setQuestionBankList(questionBankList);
-                sectionBank.setMaxPoint(sectionMaxPoint[0]);
+//                sectionBank.setMaxPoint(sectionMaxPoint[0]);
 
                 sectionBank = sectionBankService.saveSectionBank(sectionBank);
 
                 sectionBankList.add(sectionBank);
 
-                questionnaireMaxPoint[0] = questionnaireMaxPoint[0] + sectionBank.getMaxPoint();
+//                questionnaireMaxPoint[0] = questionnaireMaxPoint[0] + sectionBank.getMaxPoint();
             });
 
-            questionnaireBank.setMaxPoint(questionnaireMaxPoint[0]);
+//            questionnaireBank.setMaxPoint(questionnaireMaxPoint[0]);
             questionnaireBank.setSectionBankList(sectionBankList);
             questionnaireBank.setCourse(course);
 
             questionnaireBank = questionnaireBankService.saveQuestionnaireBank(questionnaireBank);
 
-            componentBank.setMaxPoint(componentBank.getMaxPoint() + questionnaireBank.getMaxPoint());
+//            componentBank.setMaxPoint(componentBank.getMaxPoint() + questionnaireBank.getMaxPoint());
             componentBank.addQuestionnaire(questionnaireBank);
             componentBankService.saveComponentBank(componentBank);
 
@@ -172,7 +176,7 @@ public class QuestionnaireBankController {
                     section.getQuestionBankList().forEach(question -> {
                         List<AnswerMap> userAnswers = answerMapService.getAllAnswersByQuestionAndUser(question, user);
                         question.setAnswerMapList(userAnswers);
-                        Double questionPoint = getPointQuestion(question);
+                        Double questionPoint = question.getPointQuestion(question);
                         pointSection[0] += questionPoint;
                         question.setPoint(questionPoint);
                     });
@@ -183,15 +187,15 @@ public class QuestionnaireBankController {
                 questionnaireBank.setPoint(anketaPoint[0]);
             }
 
-            if (user.isAdmin()) {
-                questionnaireBank.getSections().forEach(section -> {
-                    section.getQuestionBankList().forEach(question -> {
-                        question.getAnswerBankList().forEach(answerBank -> {
-                            answerBank.setIsCorrectPublic(answerBank.getIsCorrect());
-                        });
-                    });
-                });
-            }
+//            if (user.isAdmin()) {
+//                questionnaireBank.getSections().forEach(section -> {
+//                    section.getQuestionBankList().forEach(question -> {
+//                        question.getAnswerBankList().forEach(answerBank -> {
+//                            answerBank.setIsCorrectPublic(answerBank.getIsCorrect());
+//                        });
+//                    });
+//                });
+//            }
 
             return ResponseEntity.ok(questionnaireBank);
         } catch (Exception e) {
@@ -200,72 +204,90 @@ public class QuestionnaireBankController {
         }
     }
 
-    private Double getPointQuestion(QuestionBank questionBank) {
-        Double[] point = {0.0};
-        if (questionBank.getType() == QuestionType.OPEN) {
-            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
-                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
-                    .collect(Collectors.toList());
-            if (answerMapList.size() == 0) {
-                return 0.0;
-            }
-            if (answerMapList.get(0).getIsSelected() == null) {
-                return 0.0;
-            }
-            if (answerMapList.get(0).getIsSelected()) {
-                return 1.0;
-            } else {
-                return 0.0;
-            }
-        }
-        if (questionBank.getType() == QuestionType.LIST) {
-            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
-                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
-                    .collect(Collectors.toList());
-            if (answerMapList.size() == 0) {
-                return 0.0;
-            }
-            for (AnswerMap answerMap : answerMapList) {
-                if (answerMap.getIsSelected() != null) {
-                    if (answerMap.getAnswerBank().getIsCorrect()) {
-                        if (answerMap.getIsSelected()) {
-                            point[0] += 1.0;
-                        }
-                    }
-                }
-            }
-            if (point[0] > 0.0) {
-                return 1.0;
-            } else {
-                return 0.0;
-            }
-        }
-        if (questionBank.getType() == QuestionType.MCQ) {
-            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
-                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
-                    .collect(Collectors.toList());
-            if (answerMapList.size() == 0) {
-                return 0.0;
-            }
-            Double divideNum = 1.0;
-            for (AnswerMap answerMap : answerMapList) {
-                if (answerMap.getIsSelected() != null) {
-                    if (answerMap.getAnswerBank().getIsCorrect()) {
-                        if (answerMap.getIsSelected()) {
-                            point[0] += 1.0;
-                        }
-                    } else {
-                        if (answerMap.getIsSelected()) {
-                            divideNum += 1.0;
-                        }
-                    }
-                }
-            }
-
-            point[0] /= divideNum;
-        }
-        return point[0];
-    }
+//    private Double getPointQuestion(QuestionBank questionBank) {
+//        Double[] point = {0.0};
+////        if (questionBank.getType() == QuestionType.OPEN) {
+////            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
+////                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
+////                    .collect(Collectors.toList());
+////            if (answerMapList.size() == 0) {
+////                return 0.0;
+////            }
+////            if (answerMapList.get(0).getIsSelected() == null) {
+////                return 0.0;
+////            }
+////            if (answerMapList.get(0).getIsSelected()) {
+////                return 1.0;
+////            } else {
+////                return 0.0;
+////            }
+////        }
+////        if (questionBank.getType() == QuestionType.LIST) {
+////            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
+////                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
+////                    .collect(Collectors.toList());
+////            if (answerMapList.size() == 0) {
+////                return 0.0;
+////            }
+////            for (AnswerMap answerMap : answerMapList) {
+////                if (answerMap.getIsSelected() != null) {
+//////                    if (answerMap.getAnswerBank().getIsCorrect()) {
+//////                        if (answerMap.getIsSelected()) {
+//////                            point[0] += 1.0;
+//////                        }
+//////                    }
+////                    point[0] += answerMap.getAnswerBank().getPoint();
+////                }
+////            }
+////            if (point[0] > 0.0) {
+////                return 1.0;
+////            } else {
+////                return 0.0;
+////            }
+////        }
+////        if (questionBank.getType() == QuestionType.MCQ) {
+////            List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
+////                    .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
+////                    .collect(Collectors.toList());
+////            if (answerMapList.size() == 0) {
+////                return 0.0;
+////            }
+////            Double divideNum = 1.0;
+////            for (AnswerMap answerMap : answerMapList) {
+////                if (answerMap.getIsSelected() != null) {
+////                    if (answerMap.getAnswerBank().getIsCorrect()) {
+////                        if (answerMap.getIsSelected()) {
+////                            point[0] += 1.0;
+////                        }
+////                    } else {
+////                        if (answerMap.getIsSelected()) {
+////                            divideNum += 1.0;
+////                        }
+////                    }
+////                }
+////            }
+////
+////            point[0] /= divideNum;
+////        }
+//
+//        List<AnswerMap> answerMapList = questionBank.getAnswerMapList().stream()
+//                .filter(answerMap -> answerMap.getQuestionBank().getId() == questionBank.getId())
+//                .collect(Collectors.toList());
+//        if (answerMapList.size() == 0) {
+//            return 0.0;
+//        }
+//        for (AnswerMap answerMap : answerMapList) {
+//            if (answerMap.getIsSelected() != null) {
+////                    if (answerMap.getAnswerBank().getIsCorrect()) {
+////                        if (answerMap.getIsSelected()) {
+////                            point[0] += 1.0;
+////                        }
+////                    }
+//                point[0] += answerMap.getAnswerBank().getPoint();
+//            }
+//        }
+//        return point[0];
+//    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity deleteQuestionnaireById(@PathVariable UUID id) {

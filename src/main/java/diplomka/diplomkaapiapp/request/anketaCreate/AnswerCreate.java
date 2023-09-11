@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class AnswerCreate {
     private String answer;
-    private Boolean isCorrect;
+    private Double point;
+//    private Boolean isCorrect;
 }

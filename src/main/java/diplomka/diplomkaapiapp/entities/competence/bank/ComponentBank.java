@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,12 +39,19 @@ public class ComponentBank {
     @Column(columnDefinition = "TEXT")
     private String nameRu;
 
-    private Double maxPoint = 0.0;
+    @JsonGetter
+    public Double maxPoint() {
+        Double result = 0.0;
+        for (QuestionnaireBank questionnaireBank : questionnaireBankList) {
+            result += questionnaireBank.maxPoint();
+        }
+        return result;
+    }
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("createdAt ASC")
-    private List<QuestionnaireBank> questionnaireBankList;
+    private List<QuestionnaireBank> questionnaireBankList = new ArrayList<>();
 
     public ComponentBank(String name, String nameKz, String nameRu) {
         this.name = name;

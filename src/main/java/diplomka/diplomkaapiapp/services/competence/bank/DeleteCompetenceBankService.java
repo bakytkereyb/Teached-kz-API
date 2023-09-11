@@ -55,7 +55,7 @@ public class DeleteCompetenceBankService {
                             .filter(anketa -> anketa.getId() != questionnaireBank.getId())
                             .collect(Collectors.toList())
             );
-            componentBank.setMaxPoint(componentBank.getMaxPoint() - questionnaireBank.getMaxPoint());
+//            componentBank.setMaxPoint(componentBank.getMaxPoint() - questionnaireBank.getMaxPoint());
             componentBankRepository.save(componentBank);
         }
         List<SectionBank> sectionBankList = questionnaireBank.getSectionBankList();

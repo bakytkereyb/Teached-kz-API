@@ -23,13 +23,17 @@ public class AnswerBank {
     private String answer;
 
     @JsonIgnore
-    private Boolean isCorrect;
+    private Double point;
 
-    @Transient
-    private Boolean isCorrectPublic;
+//    @JsonIgnore
+//    private Boolean isCorrect;
+//
+//    @Transient
+//    private Boolean isCorrectPublic;
 
     public AnswerBank(AnswerCreate answerCreate) {
         this.answer = answerCreate.getAnswer();
-        this.isCorrect = answerCreate.getIsCorrect();
+//        this.isCorrect = answerCreate.getIsCorrect();
+        this.point = answerCreate.getPoint();
     }
 }

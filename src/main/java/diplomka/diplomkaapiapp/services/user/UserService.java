@@ -52,6 +52,57 @@ public class UserService {
         throw new Exception("User already exists");
     }
 
+    public void initAdmin() {
+        User user = new User(
+                "admin",
+                "123",
+                "Admin",
+                "Admin",
+                "a@a.ru");
+        Role userRole = roleRepository.findByRoleName("admin");
+        user.addRole(userRole);
+
+        User existingUser = userRepository.findByUsername(user.getUsername()).orElse(null);
+        if (existingUser == null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+        }
+    }
+
+    public void initDefaultTrainer() {
+        User user = new User(
+                "trainer",
+                "123",
+                "Trainer",
+                "Ttttt",
+                "b@a.ru");
+        Role userRole = roleRepository.findByRoleName("trainer");
+        user.addRole(userRole);
+
+        User existingUser = userRepository.findByUsername(user.getUsername()).orElse(null);
+        if (existingUser == null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+        }
+    }
+
+    public void initDefaultUser() {
+        User user = new User(
+                "user",
+                "123",
+                "User",
+                "uuuuu",
+                "c@a.ru");
+        Role userRole = roleRepository.findByRoleName("user");
+        user.addRole(userRole);
+
+        User existingUser = userRepository.findByUsername(user.getUsername()).orElse(null);
+        if (existingUser == null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+        }
+    }
+
     public long countAllUsers() {
         return userRepository.count();
     }

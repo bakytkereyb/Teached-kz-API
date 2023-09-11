@@ -1,5 +1,6 @@
 package diplomka.diplomkaapiapp.entities.competence.bank;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import diplomka.diplomkaapiapp.entities.competence.Status;
 import diplomka.diplomkaapiapp.entities.course.Course;
@@ -42,7 +43,14 @@ public class QuestionnaireBank {
     @Column(columnDefinition = "TEXT")
     private String nameRu;
 
-    private Double maxPoint;
+    @JsonGetter
+    public Double maxPoint() {
+        Double result = 0.0;
+        for (SectionBank sectionBank : sectionBankList) {
+            result += sectionBank.maxPoint();
+        }
+        return result;
+    }
 
     @ManyToOne
     private Course course;
@@ -50,7 +58,7 @@ public class QuestionnaireBank {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<SectionBank> sectionBankList;
+    private List<SectionBank> sectionBankList = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
