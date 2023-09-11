@@ -4,6 +4,7 @@ import diplomka.diplomkaapiapp.constants.EnvironmentProperties;
 import diplomka.diplomkaapiapp.entities.competence.bank.CompetenceBank;
 import diplomka.diplomkaapiapp.entities.user.Role;
 import diplomka.diplomkaapiapp.services.competence.bank.CompetenceBankService;
+import diplomka.diplomkaapiapp.services.competence.bank.ComponentBankService;
 import diplomka.diplomkaapiapp.services.storage.FilesStorageService;
 import diplomka.diplomkaapiapp.services.user.RoleService;
 import diplomka.diplomkaapiapp.services.user.UserService;
@@ -37,6 +38,7 @@ public class DiplomkaApiAppApplication {
         RoleService roleService = configurableApplicationContext.getBean(RoleService.class);
         UserService userService = configurableApplicationContext.getBean(UserService.class);
         CompetenceBankService competenceBankService = configurableApplicationContext.getBean(CompetenceBankService.class);
+        ComponentBankService componentBankService = configurableApplicationContext.getBean(ComponentBankService.class);
 
         Role userRole = new Role("user");
         Role adminRole = new Role("admin");
@@ -55,5 +57,7 @@ public class DiplomkaApiAppApplication {
         userService.initAdmin();
         userService.initDefaultTrainer();
         userService.initDefaultUser();
+
+        componentBankService.initComponents();
     }
 }

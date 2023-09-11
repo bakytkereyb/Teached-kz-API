@@ -13,4 +13,5 @@ import java.util.UUID;
 @Repository
 public interface ComponentBankRepository extends JpaRepository<ComponentBank, UUID>, PagingAndSortingRepository<ComponentBank, UUID> {
     ComponentBank findByQuestionnaireBankListContaining(QuestionnaireBank questionnaireBank);
+    ComponentBank findByName(String name);
 }
