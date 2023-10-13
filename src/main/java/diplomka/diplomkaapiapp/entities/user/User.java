@@ -97,6 +97,9 @@ public class User implements UserDetails {
 
     private Boolean isConfirmed = false;
 
+    @ManyToOne
+    private University university;
+
     @Column(columnDefinition = "TEXT")
     private String imageFileName = "defaultUser.png";
 
@@ -150,12 +153,13 @@ public class User implements UserDetails {
                 !StringUtils.isEmpty(telNumber);
     }
 
-    public User(String username, String password, String firstName, String secondName, String email) {
+    public User(String username, String password, String firstName, String secondName, String email, University university) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.secondName = secondName;
         this.email = email;
+        this.university = university;
     }
 
 //    @JsonIgnore

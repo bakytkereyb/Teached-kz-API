@@ -49,7 +49,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/auth/**",
-                        "/api/user/save/**"
+                        "/api/user/save/**",
+                        "/api/university/get"
                 )
                 .permitAll();
 

@@ -55,10 +55,11 @@ public class UserService {
     public void initAdmin() {
         User user = new User(
                 "admin",
-                "123",
+                "1234567890qwerty",
                 "Admin",
                 "Admin",
-                "a@a.ru");
+                "a@a.ru",
+                null);
         Role userRole = roleRepository.findByRoleName("admin");
         user.addRole(userRole);
 
@@ -72,10 +73,11 @@ public class UserService {
     public void initDefaultTrainer() {
         User user = new User(
                 "trainer",
-                "123",
+                "1234567890qwerty",
                 "Trainer",
                 "Ttttt",
-                "b@a.ru");
+                "b@a.ru",
+                null);
         Role userRole = roleRepository.findByRoleName("trainer");
         user.addRole(userRole);
 
@@ -89,10 +91,11 @@ public class UserService {
     public void initDefaultUser() {
         User user = new User(
                 "user",
-                "123",
+                "1234567890qwerty",
                 "User",
                 "uuuuu",
-                "c@a.ru");
+                "c@a.ru",
+                null);
         Role userRole = roleRepository.findByRoleName("user");
         user.addRole(userRole);
 

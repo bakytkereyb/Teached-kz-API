@@ -1,11 +1,13 @@
 package diplomka.diplomkaapiapp.controllers.user;
 
 import diplomka.diplomkaapiapp.entities.user.Role;
+import diplomka.diplomkaapiapp.entities.user.University;
 import diplomka.diplomkaapiapp.entities.user.User;
 import diplomka.diplomkaapiapp.request.ListPagination.ListPagination;
 import diplomka.diplomkaapiapp.request.UserPut;
 import diplomka.diplomkaapiapp.services.jwt.JwtService;
 import diplomka.diplomkaapiapp.services.user.RoleService;
+import diplomka.diplomkaapiapp.services.user.UniversityService;
 import diplomka.diplomkaapiapp.services.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,20 +39,30 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final JwtService jwtService;
+    private final UniversityService universityService;
 
     @PostMapping("/save")
-    public ResponseEntity saveUser(@RequestParam("username") String username,
-                                   @RequestParam("password") String password,
-                                   @RequestParam("firstName") String firstName,
-                                   @RequestParam("secondName") String secondName,
-                                   @RequestParam("email") String email) {
+    public ResponseEntity saveUser(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestParam("firstName") String firstName,
+            @RequestParam("secondName") String secondName,
+            @RequestParam("email") String email,
+            @RequestParam("universityId") UUID universityId
+        ) {
         try {
+            University university = universityService.getUniversityById(universityId);
+            if (university == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("university not found");
+            }
+
             User user = new User(
                     username,
                     password,
                     firstName,
                     secondName,
-                    email);
+                    email,
+                    university);
             Role userRole = roleService.getRoleByName("user");
             user.addRole(userRole);
             return ResponseEntity.ok(userService.saveUser(user));
@@ -122,7 +134,8 @@ public class UserController {
                     password,
                     firstName,
                     secondName,
-                    email);
+                    email,
+                    null);
             Role userRole = roleService.getRoleByName("admin");
             user.addRole(userRole);
             return ResponseEntity.ok(userService.saveUser(user));
@@ -144,7 +157,8 @@ public class UserController {
                     password,
                     firstName,
                     secondName,
-                    email);
+                    email,
+                    null);
             Role userRole = roleService.getRoleByName("trainer");
             user.addRole(userRole);
             return ResponseEntity.ok(userService.saveUser(user));
