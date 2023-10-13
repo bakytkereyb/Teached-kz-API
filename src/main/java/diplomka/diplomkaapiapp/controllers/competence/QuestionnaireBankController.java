@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -196,7 +197,11 @@ public class QuestionnaireBankController {
 //                    });
 //                });
 //            }
-
+            for (SectionBank sectionBank : questionnaireBank.getSections()) {
+                for (QuestionBank questionBank : sectionBank.getQuestionBankList()) {
+                    Collections.shuffle(questionBank.getAnswerBankList());
+                }
+            }
             return ResponseEntity.ok(questionnaireBank);
         } catch (Exception e) {
             log.error(e.toString());
