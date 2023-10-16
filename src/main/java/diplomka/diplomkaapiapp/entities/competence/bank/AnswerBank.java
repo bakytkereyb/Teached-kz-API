@@ -22,6 +22,12 @@ public class AnswerBank {
     @Column(columnDefinition = "TEXT")
     private String answer;
 
+    @Column(columnDefinition = "TEXT")
+    private String answerKz;
+
+    @Column(columnDefinition = "TEXT")
+    private String answerRu;
+
     @JsonIgnore
     private Double point;
 
@@ -33,6 +39,8 @@ public class AnswerBank {
 
     public AnswerBank(AnswerCreate answerCreate) {
         this.answer = answerCreate.getAnswer();
+        this.answerKz = answerCreate.getAnswerKz();
+        this.answerRu = answerCreate.getAnswerRu();
 //        this.isCorrect = answerCreate.getIsCorrect();
         this.point = answerCreate.getPoint();
     }

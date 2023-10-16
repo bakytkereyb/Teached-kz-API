@@ -28,6 +28,12 @@ public class SectionBank {
     @Column(columnDefinition = "TEXT")
     private String name;
 
+    @Column(columnDefinition = "TEXT")
+    private String nameKz;
+
+    @Column(columnDefinition = "TEXT")
+    private String nameRu;
+
     @JsonGetter
     public Double maxPoint() {
         Double result = 0.0;
@@ -45,6 +51,8 @@ public class SectionBank {
 
     public SectionBank(SectionCreate sectionCreate) {
         this.name = sectionCreate.getName();
+        this.nameKz = sectionCreate.getNameKz();
+        this.nameRu = sectionCreate.getNameRu();
     }
 
     @Transient

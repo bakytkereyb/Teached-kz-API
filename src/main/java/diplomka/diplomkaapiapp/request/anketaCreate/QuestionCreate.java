@@ -8,6 +8,8 @@ import java.util.List;
 @Data
 public class QuestionCreate {
     private String question;
+    private String questionKz;
+    private String questionRu;
     private QuestionType type; // MCQ , OPEN , LIST
     private List<AnswerCreate> answers;
 }

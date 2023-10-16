@@ -31,6 +31,12 @@ public class QuestionBank {
     @Column(columnDefinition = "TEXT")
     private String question;
 
+    @Column(columnDefinition = "TEXT")
+    private String questionKz;
+
+    @Column(columnDefinition = "TEXT")
+    private String questionRu;
+
     @NotNull
     @Column(columnDefinition = "TEXT")
     @Enumerated(EnumType.STRING)
@@ -43,6 +49,8 @@ public class QuestionBank {
 
     public QuestionBank(QuestionCreate questionCreate) {
         this.question = questionCreate.getQuestion();
+        this.questionKz = questionCreate.getQuestionKz();
+        this.questionRu = questionCreate.getQuestionRu();
         this.type = questionCreate.getType();
     }
 
