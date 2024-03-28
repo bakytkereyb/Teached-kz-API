@@ -47,22 +47,22 @@ public class ComponentBankService {
 //                "Informational",
 //                "Ақпараттық",
 //                "Информационный");
-        ComponentBank com5 = new ComponentBank(
-                "Communicative",
-                "Коммуникативті",
-                "Коммуникативный");
-        ComponentBank com6 = new ComponentBank(
-                "Reflective",
-                "Рефлексиялық",
-                "Рефлексивный");
+//        ComponentBank com5 = new ComponentBank(
+//                "Communicative",
+//                "Коммуникативті",
+//                "Коммуникативный");
+//        ComponentBank com6 = new ComponentBank(
+//                "Reflective",
+//                "Рефлексиялық",
+//                "Рефлексивный");
         ComponentBank com7 = new ComponentBank(
                 "Monitoring",
                 "Бақылау",
                 "Мониторинговый");
         ComponentBank com8 = new ComponentBank(
-                "Personal-motivational",
-                "Жеке-мотивациялық",
-                "Личностно-мотивационный");
+                "Personal",
+                "Жеке",
+                "Личностный");
 //        if (componentBankRepository.findByName(com1.getName()) == null) {
 //            componentBankRepository.save(com1);
 //            competenceBank.addComponent(com1);
@@ -83,16 +83,16 @@ public class ComponentBankService {
 //            competenceBank.addComponent(com4);
 //            competenceBankRepository.save(competenceBank);
 //        }
-        if (componentBankRepository.findByName(com5.getName()) == null) {
-            componentBankRepository.save(com5);
-            competenceBank.addComponent(com5);
-            competenceBankRepository.save(competenceBank);
-        }
-        if (componentBankRepository.findByName(com6.getName()) == null) {
-            componentBankRepository.save(com6);
-            competenceBank.addComponent(com6);
-            competenceBankRepository.save(competenceBank);
-        }
+//        if (componentBankRepository.findByName(com5.getName()) == null) {
+//            componentBankRepository.save(com5);
+//            competenceBank.addComponent(com5);
+//            competenceBankRepository.save(competenceBank);
+//        }
+//        if (componentBankRepository.findByName(com6.getName()) == null) {
+//            componentBankRepository.save(com6);
+//            competenceBank.addComponent(com6);
+//            competenceBankRepository.save(competenceBank);
+//        }
         if (componentBankRepository.findByName(com7.getName()) == null) {
             componentBankRepository.save(com7);
             competenceBank.addComponent(com7);
