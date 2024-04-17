@@ -50,7 +50,9 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/api/auth/**",
                         "/api/user/save/**",
-                        "/api/university/get"
+                        "/api/university/get",
+                        "/api/scopus/**",
+                        "/api/scopus/"
                 )
                 .permitAll();
 
