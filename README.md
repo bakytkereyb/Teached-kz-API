@@ -1,28 +1,28 @@
 # teached.kz - Backend
 
-## Описание проекта
-Это backend часть веб-приложения teached.kz, предназначенная для образовательных целей. Проект включает в себя аутентификацию пользователей, управление анкетами и компетенциями через REST API.
+## Project Description
+This is the backend part of the teached.kz web application, designed for educational purposes. The project includes user authentication, management of questionnaires and competencies through a REST API.
 
-## Технологический стек
-- **Язык программирования:** Java 17
-- **Сборщик проекта:** Maven
-- **База данных:** PostgreSQL
-- **Фреймворк:** Spring Boot
+## Technology Stack
+- **Programming Language:** Java 17
+- **Project Builder:** Maven
+- **Database:** PostgreSQL
+- **Framework:** Spring Boot
 
-## Требования
-Убедитесь, что на вашем компьютере установлены следующие инструменты:
+## Requirements
+Ensure the following tools are installed on your computer:
 - JDK 17
 - Maven
 - PostgreSQL
 
-## Настройка проекта
+## Project Setup
 
-### Шаг 1: Установка и настройка PostgreSQL
-1. Установите PostgreSQL.
-2. Создайте базу данных `teacheddb`.
+### Step 1: Installation and Configuration of PostgreSQL
+1. Install PostgreSQL.
+2. Create a database `teacheddb`.
 
-### Шаг 2: Конфигурация `application.properties`
-Отредактируйте файл `src/main/resources/application.properties`, указав следующие параметры:
+### Step 2: Configuration of `application.properties`
+Edit the `src/main/resources/application.properties`, file with the following settings:
 ```
 spring.datasource.url=jdbc:postgresql://localhost:5432/teacheddb
 spring.datasource.username=ваш_логин
@@ -31,28 +31,28 @@ spring.mail.host=адрес_почтового_сервера
 spring.mail.username=логин_почты
 spring.mail.password=пароль_почты
 ```
-### Шаг 3: Настройка класса `EnvironmentProperties`
-Настройте необходимые переменные среды в классе `EnvironmentProperties`, который находится в папке `constants`.
+### Step 3: Setting Up `EnvironmentProperties`
+Configure the necessary environment variables in the `EnvironmentProperties` class, located in the `constants` folder.
 
-## Запуск приложения
-Для запуска приложения используйте следующую команду Maven:
+## Application Launch
+To launch the application, use the following Maven command:
 ```
 mvn spring-boot:run
 ```
-Приложение запустится на порту `8080`.
+The application will start on port `8080`.
 
 ## API Endpoints
-### Аутентификация
-* `POST /api/auth/login` - Авторизация пользователя. Требует `username` и `password`. Возвращает `access_token`.
+### Authentication
+* `POST /api/auth/login` - User authorization. Requires `username` and `password`. Returns `access_token`.
 
-### Банк компетенций
-* `GET /api/competence-bank/get` - Получение списка компетенций, доступных для пользователя.
+### Competence Bank
+* `GET /api/competence-bank/get` - Retrieving a list of competencies available to the user.
 
-### Прохождение анкет
-* `POST /api/questionnaire-bank/{id}/pass` - Сдача анкеты по указанному `ID`.
+### Passing Questionnaires
+* `POST /api/questionnaire-bank/{id}/pass` - Submission of a questionnaire for a specified `ID`.
 
-### Регистрация пользователей
-* `POST /api/user/save` - Регистрация нового пользователя.
+### User Registration
+* `POST /api/user/save` - Registration of a new user.
 
-## Документация API
-Подробную документацию по API можно найти в Swagger, доступном по адресу `/docs` после запуска приложения.
+## API Documentation
+Detailed API documentation can be found in Swagger, available at `/docs` after launching the application.
